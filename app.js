@@ -2,7 +2,7 @@ const APP = {
   tripStart: new Date('2026-10-20T00:00:00+09:00'),
   tripEnd: new Date('2026-10-23T23:59:59+09:00'),
   installPrompt: null,
-  state: { view: 'home', day: 1, dayTab: 'schedule', placeFilter: '전체', jpTab: '기본 회화', checkTab: '출발 전' }
+  state: { view: 'home', day: 1, dayTab: 'schedule', placeMode: 'food', placeFilter: '전체', jpTab: '기본 회화', checkTab: '출발 전' }
 };
 
 const days = [
@@ -15,8 +15,8 @@ const days = [
       {time:'11:35',icon:'🚆',title:'신치토세공항 → 바로 오타루',desc:'快速エアポート(카이소쿠 에아포토) · 小樽行き(오타루유키) 직통 우선',route:'airport-otaru'},
       {time:'13:00',icon:'🍗',title:'나루토 본점 점심',desc:'닭 반마리 튀김 + 초밥/해산물',place:'naruto'},
       {time:'14:05',icon:'📷',title:'오타루 운하 산책',desc:'가을 운하 사진 · 창고거리',place:'otaru-canal'},
-      {time:'14:35',icon:'🍁',title:'사카이마치 거리',desc:'상점가 · 기념품 구경'},
-      {time:'15:20',icon:'🎵',title:'오타루 오르골당',desc:'오르골 · 기념품 관람'},
+      {time:'14:35',icon:'🍁',title:'사카이마치 거리',desc:'상점가 · 기념품 구경',place:'sakaimachi'},
+      {time:'15:20',icon:'🎵',title:'오타루 오르골당',desc:'오르골 · 기념품 관람',place:'music-box'},
       {time:'16:00',icon:'🍰',title:'LeTAO PATHOS',desc:'치즈케이크 · 커피 휴식',place:'letao'},
       {time:'17:10',icon:'🚆',title:'미나미오타루 → 삿포로',desc:'南小樽駅 → JR札幌駅',route:'otaru-hotel'},
       {time:'18:35',icon:'🏨',title:'호텔 체크인 · 캐리어 수령',desc:'이때 처음 숙소 방문'},
@@ -29,14 +29,14 @@ const days = [
       {time:'07:30',icon:'🍳',title:'호텔 조식',desc:'호텔 조식 후 온천용 작은 가방 준비'},
       {time:'08:20',icon:'🚶',title:'호텔 → 갓파라이너 정류장',desc:'스스키노 정류장으로 도보 이동',route:'hotel-jozankei'},
       {time:'09:18',icon:'🚌',title:'갓파라이너 출발',desc:'すすきの → 定山渓神社前\n09:18 → 10:05',route:'hotel-jozankei'},
-      {time:'10:05',icon:'⛩',title:'조잔케이 신사',desc:'定山渓神社 · 단풍 산책'},
-      {time:'10:35',icon:'🌉',title:'후타미공원 · 현수교',desc:'계곡 단풍 핵심 구간'},
-      {time:'11:30',icon:'🍱',title:'食堂いち 점심',desc:'숯불 닭 정식 · 연어 정식'},
-      {time:'12:20',icon:'🍨',title:'雨ノ日と雪ノ日',desc:'비에이 저지우유 젤라토'},
-      {time:'13:05',icon:'♨',title:'유노하나 조잔케이덴',desc:'온천 3시간 · 16:05 가족 집합'},
+      {time:'10:05',icon:'⛩',title:'조잔케이 신사',desc:'定山渓神社 · 단풍 산책',place:'jozankei-shrine'},
+      {time:'10:35',icon:'🌉',title:'후타미공원 · 현수교',desc:'계곡 단풍 핵심 구간',place:'futami'},
+      {time:'11:30',icon:'🍱',title:'食堂いち 점심',desc:'숯불 닭 정식 · 연어 정식',place:'shokudo-ichi'},
+      {time:'12:20',icon:'🍨',title:'雨ノ日と雪ノ日',desc:'비에이 저지우유 젤라토',place:'amenohi'},
+      {time:'13:05',icon:'♨',title:'유노하나 조잔케이덴',desc:'온천 3시간 · 16:05 가족 집합',place:'yunohana'},
       {time:'17:06',icon:'🚌',title:'조잔케이 → 스스키노',desc:'定山渓車庫前 17:06 → すすきの 18:05',route:'jozankei-return'},
-      {time:'18:10',icon:'🍣',title:'네무로 하나마루',desc:'COCONO SUSUKINO B1 회전초밥'},
-      {time:'19:30',icon:'🌃',title:'삿포로 TV타워 야경',desc:'오도리 야경 · 전망대'},
+      {time:'18:10',icon:'🍣',title:'네무로 하나마루',desc:'COCONO SUSUKINO B1 회전초밥',place:'hanamaru'},
+      {time:'19:30',icon:'🌃',title:'삿포로 TV타워 야경',desc:'오도리 야경 · 전망대',place:'tv-tower'},
       {time:'20:20',icon:'🌙',title:'호텔 복귀',desc:'컨디션 좋으면 오도리공원 10~15분 산책'}
     ]
   },
@@ -45,13 +45,13 @@ const days = [
     events:[
       {time:'07:30',icon:'🍳',title:'호텔 조식',desc:'쇼핑용 접이식 가방 준비'},
       {time:'08:45',icon:'🚇',title:'호텔 → 마루야마코엔역',desc:'東豊線 → 大通 환승 → 東西線',route:'hotel-shrine'},
-      {time:'09:20',icon:'⛩',title:'홋카이도 신궁',desc:'円山公園駅 3번 출구 → 도보 약 15분',route:'hotel-shrine'},
-      {time:'10:30',icon:'🍡',title:'롯카테이 신궁차야점',desc:'구운 떡·과자 · 따뜻한 음료'},
+      {time:'09:20',icon:'⛩',title:'홋카이도 신궁',desc:'円山公園駅 3번 출구 → 도보 약 15분',route:'hotel-shrine',place:'hokkaido-jingu'},
+      {time:'10:30',icon:'🍡',title:'롯카테이 신궁차야점',desc:'구운 떡·과자 · 따뜻한 음료',place:'rokkatei'},
       {time:'11:30',icon:'🛍',title:'Standard Products',desc:'moyuk SAPPORO 2F'},
       {time:'12:30',icon:'🍖',title:'돈카츠 와코',desc:'삿포로 스텔라플레이스 센터 6F',place:'wako'},
       {time:'13:30',icon:'🚌',title:'188번 버스 → 비어가든',desc:'札幌駅北口 2번 승강장 · 종점 하차',route:'sapporo-beer'},
       {time:'13:50',icon:'🛍',title:'아리오 삿포로',desc:'GU · DAISO 집중 쇼핑'},
-      {time:'15:10',icon:'🍺',title:'삿포로 맥주박물관',desc:'자유견학 · 굿즈 · 시음 선택'},
+      {time:'15:10',icon:'🍺',title:'삿포로 맥주박물관',desc:'자유견학 · 굿즈 · 시음 선택',place:'beer-museum'},
       {time:'17:00',icon:'🥩',title:'삿포로 비어가든',desc:'징기스칸 저녁 · 가족 4인 예약 권장',place:'beer-garden'},
       {time:'19:10',icon:'🛒',title:'MEGA 돈키호테',desc:'삿포로 다누키코지 본점 · 마지막 쇼핑'},
       {time:'20:30',icon:'🏨',title:'호텔 귀환',desc:'쇼핑 짐 정리 · 공항 구매목록 확인'}
@@ -65,9 +65,9 @@ const days = [
       {time:'08:50',icon:'🚇',title:'호텔 → JR 삿포로역',desc:'豊水すすきの駅 → さっぽろ駅',route:'hotel-airport'},
       {time:'09:15',icon:'🚆',title:'삿포로 → 신치토세공항',desc:'快速エアポート · 큰 캐리어면 Uシート 고려',route:'hotel-airport'},
       {time:'10:00',icon:'🧳',title:'공항 캐리어 임시보관',desc:'짐 맡긴 뒤 가볍게 공항 구경'},
-      {time:'10:20',icon:'🍫',title:"ROYCE' Chocolate World",desc:'초콜릿 · 베이커리 · Smile Road'},
-      {time:'11:10',icon:'🎀',title:'Hello Kitty Happy Flight',desc:'숍 위주로 가볍게 구경'},
-      {time:'11:30',icon:'🍜',title:'홋카이도 라멘 도죠',desc:'이치겐 새우 / 케야키 미소 / 아지사이 시오'},
+      {time:'10:20',icon:'🍫',title:"ROYCE' Chocolate World",desc:'초콜릿 · 베이커리 · Smile Road',place:'royce'},
+      {time:'11:10',icon:'🎀',title:'Hello Kitty Happy Flight',desc:'숍 위주로 가볍게 구경',place:'hello-kitty'},
+      {time:'11:30',icon:'🍜',title:'홋카이도 라멘 도죠',desc:'이치겐 새우 / 케야키 미소 / 아지사이 시오',place:'ramen-dojo'},
       {time:'12:30',icon:'🎁',title:'공항 기념품 쇼핑',desc:'로이즈 · 르타오 · 시로이코이비토'},
       {time:'13:10',icon:'🧳',title:'캐리어 찾기 · 재포장',desc:'보조배터리는 기내수하물'},
       {time:'13:30',icon:'🛂',title:'국제선 체크인 · 출국심사',desc:'수하물 위탁 → 보안검색 → 출국심사'},
@@ -148,14 +148,30 @@ const routes = {
 };
 
 const places = [
-  {id:'otaru-canal',type:'관광',name:'오타루 운하',jp:'小樽運河',pron:'오타루 운가',image:'./assets/otaru-canal.jpg',rating:'가을 추천',hours:'24시간 산책',budget:'무료',location:'오타루역 도보권',desc:'오타루의 대표 산책 코스. 첫날 캐리어 없이 가볍게 걷고, 창고거리와 운하 사진을 남기기 좋습니다.',map:'https://www.google.com/maps/search/?api=1&query=Otaru+Canal'},
-  {id:'naruto',type:'식당',name:'나루토 본점',jp:'若鶏時代なると 本店',pron:'와카도리 지다이 나루토 혼텐',image:'./assets/naruto-food.jpg',rating:'DAY 1 점심',hours:'11:00~21:00 기준',budget:'¥1,000~¥3,000',location:'오타루역 도보 약 7~8분',desc:'오타루 첫 점심. 닭 반마리 튀김과 초밥·해산물을 가족끼리 나눠 먹기 좋습니다.',menu:'若鶏半身揚げ · 초밥 · 해산물',map:'https://www.google.com/maps/search/?api=1&query=Wakadori+Jidai+Naruto+Honten+Otaru'},
-  {id:'letao',type:'카페',name:'LeTAO PATHOS',jp:'ルタオ パトス',pron:'르타오 파토스',image:'./assets/letao-dessert.jpg',rating:'DAY 1 디저트',hours:'카페 10:00~18:00 기준',budget:'¥1,000~¥2,000',location:'사카이마치 거리',desc:'오르골당과 미나미오타루역 사이에 넣기 좋은 디저트 휴식. 치즈케이크 계열이 핵심입니다.',menu:'더블 프로마쥬 · 치즈케이크 · 커피',map:'https://www.google.com/maps/search/?api=1&query=LeTAO+PATHOS+Otaru'},
-  {id:'suage',type:'식당',name:'Soup Curry Suage+',jp:'スープカレー Suage+',pron:'스푸 카레 스아게 플러스',image:'./assets/day3-sapporo.jpg',rating:'DAY 1 저녁',hours:'방문 전 영업시간 확인',budget:'¥1,500~¥2,500',location:'스스키노 도보권',desc:'첫날 저녁은 호텔 체크인 후 홋카이도식 스프카레. 아이들은 맵기를 낮게 고르는 편이 좋습니다.',menu:'닭고기·채소 스프카레',map:'https://www.google.com/maps/search/?api=1&query=Soup+Curry+Suage+Sapporo'},
-  {id:'wako',type:'식당',name:'돈카츠 와코',jp:'とんかつ和幸 札幌ステラプレイス',pron:'톤카츠 와코 삿포로 스테라푸레이스',image:'./assets/naruto-food.jpg',rating:'DAY 3 점심',hours:'11:00~22:00 기준',budget:'¥1,500~¥2,500',location:'삿포로 스텔라플레이스 6F',desc:'요청한 돈카츠 점심을 3일차에 배치. 쇼핑과 비어가든 이동 사이에 넣기 좋습니다.',menu:'로스카츠 · 히레카츠 정식',map:'https://www.google.com/maps/search/?api=1&query=Tonkatsu+Wako+Sapporo+Stellar+Place'},
-  {id:'beer-garden',type:'식당',name:'삿포로 비어가든',jp:'サッポロビール園',pron:'삿포로 비루엔',image:'./assets/day3-sapporo.jpg',rating:'DAY 3 저녁',hours:'11:30~21:00 기준',budget:'메뉴별 상이',location:'삿포로 맥주박물관 옆',desc:'맥주박물관 관람 뒤 바로 이어지는 징기스칸 저녁. 가족 4인 저녁시간은 예약을 권장합니다.',menu:'징기스칸 · 채소 · 사이드',map:'https://www.google.com/maps/search/?api=1&query=Sapporo+Beer+Garden'},
-  {id:'tv-tower',type:'관광',name:'삿포로 TV타워',jp:'さっぽろテレビ塔',pron:'삿포로 테레비토',image:'./assets/day3-sapporo.jpg',rating:'DAY 2 야경',hours:'09:00~22:00 기준',budget:'입장권 별도',location:'오도리공원',desc:'조잔케이 온천을 충분히 즐긴 뒤 2일차 저녁 야경으로 이동. 19:30 전후 방문을 기준으로 잡았습니다.',map:'https://www.google.com/maps/search/?api=1&query=Sapporo+TV+Tower'},
-  {id:'jozankei',type:'관광',name:'조잔케이',jp:'定山渓',pron:'조잔케이',image:'./assets/day2-jozankei.jpg',rating:'DAY 2 메인',hours:'온천 13:05~16:05',budget:'온천 요금 별도',location:'삿포로 남서쪽',desc:'가을 단풍과 온천을 중심으로 느긋하게 보는 날. 신사·후타미 현수교 뒤 3시간 온천을 확보했습니다.',map:'https://www.google.com/maps/search/?api=1&query=Jozankei+Onsen'}
+  // 관광지 추천
+  {id:'otaru-canal',day:1,type:'관광',name:'오타루 운하',jp:'小樽運河',pron:'오타루 운가',image:'./assets/otaru-canal.jpg',rating:'DAY 1 · 필수',hours:'24시간 산책 가능',budget:'무료',location:'오타루역 도보권',desc:'오타루에서 가장 먼저 추천하는 산책 코스. 가을빛과 석조 창고가 어우러져 첫날 사진을 남기기 좋습니다.',recommend:'나루토에서 점심을 먹은 뒤 사카이마치로 내려가기 전에 30분 정도 걷는 동선이 가장 편합니다.',map:'https://www.google.com/maps/search/?api=1&query=Otaru+Canal'},
+  {id:'sakaimachi',day:1,type:'관광',name:'사카이마치 거리',jp:'堺町通り',pron:'사카이마치도리',image:'./assets/day1-otaru.jpg',rating:'DAY 1 · 산책/쇼핑',hours:'상점별 상이',budget:'산책 무료',location:'오타루 운하~오르골당 사이',desc:'약 900m 이어지는 오타루 대표 상점가. 유리공예, 과자, 카페, 기념품점이 몰려 있어 자유여행 동선이 단순합니다.',recommend:'운하 → 사카이마치 → 오르골당 → 르타오 순서로 한 방향으로 내려가면 되돌아갈 일이 거의 없습니다.',map:'https://www.google.com/maps/search/?api=1&query=Otaru+Sakaimachi+Street'},
+  {id:'music-box',day:1,type:'관광',name:'오타루 오르골당 본관',jp:'小樽オルゴール堂 本館',pron:'오타루 오루고루도 혼칸',image:'./assets/day1-otaru.jpg',rating:'DAY 1 · 가족 추천',hours:'방문 전 당일 영업시간 확인',budget:'입장 무료',location:'사카이마치 남쪽 끝',desc:'오타루 특유의 분위기를 가장 쉽게 느끼기 좋은 장소. 건물 앞 증기시계와 내부 오르골 구경만으로도 아이들과 보기 좋습니다.',recommend:'르타오와 매우 가까워 두 곳을 묶어서 보고 미나미오타루역으로 이동하는 코스를 추천합니다.',map:'https://www.google.com/maps/search/?api=1&query=Otaru+Music+Box+Museum'},
+  {id:'jozankei-shrine',day:2,type:'관광',name:'조잔케이 신사',jp:'定山渓神社',pron:'조잔케이 진자',image:'./assets/day2-jozankei.jpg',rating:'DAY 2 · 단풍',hours:'상시 참배 가능 구역',budget:'무료',location:'定山渓神社前 정류장 인근',desc:'갓파라이너에서 내린 뒤 바로 들르기 좋은 작은 신사. 붉고 노란 단풍이 어우러지는 10월 산책 포인트입니다.',recommend:'버스에서 내리자마자 먼저 보고 후타미공원으로 이동하면 동선 낭비가 없습니다.',map:'https://www.google.com/maps/search/?api=1&query=Jozankei+Shrine'},
+  {id:'futami',day:2,type:'관광',name:'후타미공원 · 후타미 현수교',jp:'二見公園・二見吊橋',pron:'후타미 코엔 · 후타미 츠리바시',image:'./assets/day2-jozankei.jpg',rating:'DAY 2 · 단풍 핵심',hours:'산책로 개방 상태 현장 확인',budget:'무료',location:'조잔케이 온천마을',desc:'조잔케이 계곡의 가을 풍경을 보기 좋은 대표 산책 구간. 긴 트레킹 없이도 단풍과 계곡을 함께 볼 수 있습니다.',recommend:'아이들과는 깊은 산책로보다 공원과 현수교 핵심 구간만 40~50분 보는 정도가 여행 피로도가 적습니다.',map:'https://www.google.com/maps/search/?api=1&query=Futami+Suspension+Bridge+Jozankei'},
+  {id:'yunohana',day:2,type:'관광',name:'유노하나 조잔케이덴',jp:'湯の花 定山渓殿',pron:'유노하나 조잔케이덴',image:'./assets/day2-jozankei.jpg',rating:'DAY 2 · 온천 3시간',hours:'방문일 운영시간 재확인',budget:'입욕료 별도',location:'조잔케이 온천',desc:'이번 2일차의 메인. 노천탕과 휴게공간까지 포함해 2시간 30분~3시간을 편하게 보내기 좋은 대형 당일온천입니다.',recommend:'13시경 들어가 16시대에 나오는 일정이 17:06 갓파라이너와 가장 안정적으로 연결됩니다.',map:'https://www.google.com/maps/search/?api=1&query=Yunohana+Jozankei'},
+  {id:'hokkaido-jingu',day:3,type:'관광',name:'홋카이도 신궁',jp:'北海道神宮',pron:'홋카이도 진구',image:'./assets/day3-sapporo.jpg',rating:'DAY 3 · 오전 추천',hours:'계절별 개문시간 확인',budget:'무료',location:'마루야마공원',desc:'삿포로 시내에서 분위기를 확 바꿔주는 숲속 신궁. 아침 시간에 가면 비교적 차분하게 산책하기 좋습니다.',recommend:'마루야마공원역 3번 출구에서 걸어가고, 관람 후 롯카테이 신궁차야점까지 묶는 코스를 추천합니다.',map:'https://www.google.com/maps/search/?api=1&query=Hokkaido+Jingu'},
+  {id:'beer-museum',day:3,type:'관광',name:'삿포로 맥주박물관',jp:'サッポロビール博物館',pron:'삿포로 비루 하쿠부츠칸',image:'./assets/day3-sapporo.jpg',rating:'DAY 3 · 남편 추천 코스',hours:'11:00~18:00 기준 · 최종입장 확인',budget:'자유견학 무료 구역 있음',location:'삿포로 비어가든 옆',desc:'홋카이도 맥주 역사를 볼 수 있는 박물관. 아리오 쇼핑 뒤 이동하기 쉽고 저녁 징기스칸과 한 장소에서 이어집니다.',recommend:'15시대 관람 → 잠깐 휴식 → 17시 징기스칸 식사로 연결하면 이동을 한 번 줄일 수 있습니다.',map:'https://www.google.com/maps/search/?api=1&query=Sapporo+Beer+Museum'},
+  {id:'tv-tower',day:2,type:'관광',name:'삿포로 TV타워',jp:'さっぽろテレビ塔',pron:'삿포로 테레비토',image:'./assets/day3-sapporo.jpg',rating:'DAY 2 · 야경',hours:'09:00~22:00 기준',budget:'전망대 입장권 별도',location:'오도리공원',desc:'조잔케이 온천을 충분히 즐긴 뒤 시내로 돌아와 보는 야경 포인트. 오도리공원을 위에서 한눈에 볼 수 있습니다.',recommend:'온천 후 19:30 전후로 방문하면 3일차 쇼핑 일정에서 야경을 완전히 뺄 수 있어 전체 일정이 여유로워집니다.',map:'https://www.google.com/maps/search/?api=1&query=Sapporo+TV+Tower'},
+  {id:'royce',day:4,type:'관광',name:"ROYCE' Chocolate World",jp:'ロイズ チョコレートワールド',pron:'로이즈 초코레토 와루도',image:'./assets/day4-airport.jpg',rating:'DAY 4 · 공항 추천',hours:'공항 시설 운영시간 확인',budget:'관람 무료 · 구매 별도',location:'신치토세공항 3F Smile Road',desc:'마지막 날 공항을 일찍 가는 이유를 만들어주는 공간. 초콜릿 전시와 베이커리, 선물 쇼핑을 한 번에 보기 좋습니다.',recommend:'캐리어를 먼저 맡긴 뒤 가장 먼저 들르고, 이후 헬로키티와 라멘도장으로 이동하면 편합니다.',map:'https://www.google.com/maps/search/?api=1&query=Royce+Chocolate+World+New+Chitose+Airport'},
+  {id:'hello-kitty',day:4,type:'관광',name:'Hello Kitty Happy Flight',jp:'ハローキティ ハッピーフライト',pron:'하로 키티 핫피 후라이토',image:'./assets/day4-airport.jpg',rating:'DAY 4 · 아이들과',hours:'공항 시설 운영시간 확인',budget:'일부 유료',location:'신치토세공항 3F Smile Road',desc:'공항에서 아이들과 가볍게 둘러보기 좋은 캐릭터 공간. 전체 유료존보다 숍 중심으로 짧게 보는 것도 충분합니다.',recommend:'로이즈와 같은 3층 연결구역이라 이동 부담 없이 20~30분 정도 넣기 좋습니다.',map:'https://www.google.com/maps/search/?api=1&query=Hello+Kitty+Happy+Flight+New+Chitose'},
+
+  // 맛집 · 카페 추천
+  {id:'naruto',day:1,type:'식당',name:'나루토 본점',jp:'若鶏時代なると 本店',pron:'와카도리 지다이 나루토 혼텐',image:'./assets/naruto-food.jpg',rating:'DAY 1 · 점심',hours:'11:00~21:00 기준',budget:'¥1,000~¥3,000',location:'오타루역 도보 약 7~8분',desc:'오타루 첫 끼로 추천. 겉은 바삭하고 속은 촉촉한 닭 반마리 튀김이 대표 메뉴입니다.',recommend:'공항에서 바로 오타루로 가기 때문에 역에서 가깝고, 이후 운하 방향으로 이동하기 쉬운 점이 가장 큰 장점입니다.',menu:'若鶏半身揚げ · 초밥 · 해산물',map:'https://www.google.com/maps/search/?api=1&query=Wakadori+Jidai+Naruto+Honten+Otaru'},
+  {id:'letao',day:1,type:'카페',name:'LeTAO PATHOS',jp:'ルタオ パトス',pron:'르타오 파토스',image:'./assets/letao-dessert.jpg',rating:'DAY 1 · 디저트',hours:'카페 10:00~18:00 기준',budget:'¥1,000~¥2,000',location:'사카이마치 거리',desc:'오타루에서 디저트 한 곳만 고른다면 추천하는 후보. 치즈케이크 계열이 강하고 동선도 좋습니다.',recommend:'오르골당 관람 뒤 쉬었다가 미나미오타루역으로 가면 첫날 걷는 피로를 줄일 수 있습니다.',menu:'더블 프로마쥬 · 치즈케이크 · 커피',map:'https://www.google.com/maps/search/?api=1&query=LeTAO+PATHOS+Otaru'},
+  {id:'suage',day:1,type:'식당',name:'Soup Curry Suage+',jp:'スープカレー Suage+',pron:'스푸 카레 스아게 플러스',image:'./assets/day3-sapporo.jpg',rating:'DAY 1 · 저녁',hours:'방문 전 영업시간 확인',budget:'¥1,500~¥2,500',location:'스스키노 도보권',desc:'첫날 호텔 체크인 뒤 먹기 좋은 홋카이도식 스프카레. 구운 채소가 많아 가족끼리 취향 맞추기도 쉽습니다.',recommend:'첫날 저녁은 오타루에서 이미 많이 걸은 상태라 호텔 가까운 스스키노권 식당을 추천합니다.',menu:'닭고기·채소 스프카레 · 맵기 낮게 선택 가능',map:'https://www.google.com/maps/search/?api=1&query=Soup+Curry+Suage+Sapporo'},
+  {id:'shokudo-ichi',day:2,type:'식당',name:'식당 이치',jp:'食堂いち',pron:'쇼쿠도 이치',image:'./assets/day2-jozankei.jpg',rating:'DAY 2 · 점심',hours:'11:00~15:00 기준 · 화요일 휴무',budget:'¥1,000~¥2,000',location:'조잔케이 山ノ風マチ',desc:'조잔케이에서 온천 들어가기 전에 든든하게 먹기 좋은 일본식 정식집. 가족끼리 메뉴 선택이 편합니다.',recommend:'숯불 닭과 연어처럼 아이들이 먹기 쉬운 메뉴가 있어, 온천 전 점심으로 무난하게 추천합니다.',menu:'숯불 닭 정식 · 연어 정식 · 생강구이 정식',map:'https://www.google.com/maps/search/?api=1&query=Shokudo+Ichi+Jozankei'},
+  {id:'amenohi',day:2,type:'카페',name:'비 오는 날과 눈 오는 날',jp:'雨ノ日と雪ノ日',pron:'아메노히토 유키노히',image:'./assets/day2-jozankei.jpg',rating:'DAY 2 · 젤라토',hours:'10:00~18:00 기준 · 목요일 휴무',budget:'¥500~¥1,500',location:'조잔케이 온천마을',desc:'조잔케이 산책 후 온천에 들어가기 전 잠깐 쉬기 좋은 젤라토 카페. 우유 풍미가 진한 디저트가 중심입니다.',recommend:'점심을 먹은 뒤 20~30분만 쉬고 온천으로 이동하면 3시간 온천 시간을 그대로 확보할 수 있습니다.',menu:'저지우유 젤라토 · 커피',map:'https://www.google.com/maps/search/?api=1&query=Ame+no+Hi+to+Yuki+no+Hi+Jozankei'},
+  {id:'hanamaru',day:2,type:'식당',name:'네무로 하나마루 COCONO SUSUKINO',jp:'回転寿司 根室花まる',pron:'카이텐즈시 네무로 하나마루',image:'./assets/day3-sapporo.jpg',rating:'DAY 2 · 저녁',hours:'11:00~21:00 기준',budget:'주문량별 상이',location:'COCONO SUSUKINO B1',desc:'온천 후 스스키노에 도착하자마자 먹기 좋은 회전초밥. 숙소와 TV타워 이동 사이에 위치가 좋습니다.',recommend:'대기시간이 길면 야경 일정이 밀릴 수 있으니 25~30분 이상이면 같은 건물 안 다른 식당으로 바꾸는 플랜B를 추천합니다.',menu:'연어 · 참치 · 가리비 · 새우 · 제철초밥',map:'https://www.google.com/maps/search/?api=1&query=Nemuro+Hanamaru+COCONO+Susukino'},
+  {id:'rokkatei',day:3,type:'카페',name:'롯카테이 신궁차야점',jp:'六花亭 神宮茶屋店',pron:'롯카테이 진구 차야텐',image:'./assets/day3-sapporo.jpg',rating:'DAY 3 · 오전 간식',hours:'09:00~17:00 기준',budget:'¥500~¥1,500',location:'홋카이도 신궁 인근',desc:'신궁 산책 뒤 쉬기 좋은 작은 디저트 코스. 홋카이도 과자를 현장에서 간단히 먹고 가기 좋습니다.',recommend:'아침에 신궁을 보고 바로 들르면 동선을 추가하지 않고도 카페 시간을 만들 수 있습니다.',menu:'구운 떡 · 과자 · 따뜻한 음료',map:'https://www.google.com/maps/search/?api=1&query=Rokkatei+Jingu+Chayaten'},
+  {id:'wako',day:3,type:'식당',name:'돈카츠 와코',jp:'とんかつ和幸 札幌ステラプレイス',pron:'톤카츠 와코 삿포로 스테라푸레이스',image:'./assets/naruto-food.jpg',rating:'DAY 3 · 점심',hours:'11:00~22:00 기준',budget:'¥1,500~¥2,500',location:'삿포로 스텔라플레이스 6F',desc:'요청한 돈카츠 점심을 3일차에 배치. 삿포로역에서 다음 비어가든 버스를 타기 전에 먹기 편한 위치입니다.',recommend:'아이들은 히레카츠, 어른은 로스카츠를 골라 나눠 먹으면 메뉴 선택이 편합니다.',menu:'로스카츠 · 히레카츠 정식',map:'https://www.google.com/maps/search/?api=1&query=Tonkatsu+Wako+Sapporo+Stellar+Place'},
+  {id:'beer-garden',day:3,type:'식당',name:'삿포로 비어가든',jp:'サッポロビール園',pron:'삿포로 비루엔',image:'./assets/day3-sapporo.jpg',rating:'DAY 3 · 저녁',hours:'11:30~21:00 기준',budget:'메뉴별 상이',location:'삿포로 맥주박물관 옆',desc:'맥주박물관 관람 뒤 이동 없이 바로 이어지는 징기스칸 저녁. 이번 여행에서 남편을 위해 넣은 핵심 식사 코스입니다.',recommend:'17시 전후로 예약해 두면 쇼핑·박물관을 마친 뒤 줄 서는 시간을 줄일 수 있습니다.',menu:'생양고기 징기스칸 · 채소 · 사이드 메뉴',map:'https://www.google.com/maps/search/?api=1&query=Sapporo+Beer+Garden'},
+  {id:'ramen-dojo',day:4,type:'식당',name:'홋카이도 라멘 도죠',jp:'北海道ラーメン道場',pron:'홋카이도 라멘 도죠',image:'./assets/day4-airport.jpg',rating:'DAY 4 · 마지막 점심',hours:'매장별 영업시간 상이',budget:'¥1,000~¥2,000',location:'신치토세공항 국내선 3F',desc:'귀국 전 마지막 한 끼로 라멘을 먹기 가장 편한 선택. 여러 인기 라멘집이 한 공간에 모여 있어 줄이 짧은 곳으로 바꾸기도 쉽습니다.',recommend:'특정 가게 줄이 너무 길면 고집하지 말고 바로 옆 매장으로 바꾸는 것이 16시 비행 일정에는 더 안전합니다.',menu:'이치겐 새우라멘 · 케야키 미소라멘 · 아지사이 시오라멘',map:'https://www.google.com/maps/search/?api=1&query=Hokkaido+Ramen+Dojo+New+Chitose+Airport'}
 ];
 
 const phrases = [
@@ -275,7 +291,8 @@ function shell(content){
       <div class="desktop-brand"><img src="./assets/icon-192.png"><div><strong>SAPPORO</strong><small>FAMILY TRIP 2026</small></div></div>
       <div class="desktop-menu">${navItems.map(([v,i,l])=>`<button class="desktop-nav-btn ${active===v?'active':''}" data-nav="${v}"><span>${i}</span>${l}</button>`).join('')}
         <button class="desktop-nav-btn ${APP.state.view==='japanese'?'active':''}" data-nav="japanese"><span>あ</span>여행 일본어</button>
-        <button class="desktop-nav-btn ${APP.state.view==='places'?'active':''}" data-nav="places"><span>♡</span>맛집·카페</button>
+        <button class="desktop-nav-btn ${APP.state.view==='places' && APP.state.placeMode==='food'?'active':''}" data-place-mode="food"><span>♡</span>맛집·카페</button>
+        <button class="desktop-nav-btn ${APP.state.view==='places' && APP.state.placeMode==='tourism'?'active':''}" data-place-mode="tourism"><span>◉</span>관광지</button>
       </div>
       <div class="desktop-trip-card"><strong>2026.10.20 - 10.23</strong><p>가족과 함께하는 3박 4일 가을 삿포로 자유여행</p><img src="./assets/bichon-home.jpg"></div>
     </aside>
@@ -294,10 +311,14 @@ function renderHome(){
         <div class="hero-lower"><div><div class="hero-day">TODAY / START</div><div class="hero-place">DAY ${day.day}<br>${day.title}</div></div><img class="hero-bichon" src="./assets/bichon-home.jpg" alt="미니비숑 캐릭터"></div>
       </div></article>
       <article class="next-card"><div class="section-label"><h2>${status.mode==='before'?'출발하면 먼저':'다음 일정'}</h2><button class="small-link" data-day="${day.day}">전체 보기 ›</button></div><div class="mini-schedule">${events.map(e=>`<div class="mini-row"><span class="time-chip">${e.time}</span><div><div class="mini-title">${e.icon} ${e.title}</div><div class="mini-desc">${esc(e.desc.split('\n')[0])}</div></div><span class="arrow">›</span></div>`).join('')}</div><button class="primary-btn" style="width:100%;margin-top:11px" data-day="${day.day}">오늘 일정 보기 ›</button></article>
-      <div class="notice-card"><div class="notice-icon">🧳</div><div><div class="notice-title">DAY 1 핵심 수정 반영</div><div class="notice-copy">신치토세공항에서 캐리어만 숙소로 배송하고, 가족은 숙소에 들르지 않고 JR로 바로 오타루에 갑니다.</div></div></div>
     </div>
     <div class="quick-grid">
-      ${[['schedule','🗓','여행 일정','4일 전체보기'],['routes','🚆','교통편','지하철·버스'],['places','🍴','맛집·카페','추천 리스트'],['places','📷','관광지','명소 둘러보기'],['checklist','✅','체크리스트','준비물 확인'],['japanese','あ','여행 일본어','회화·음성']].map(x=>`<button class="quick-tile" data-nav="${x[0]}"><div class="quick-icon">${x[1]}</div><div class="quick-title">${x[2]}</div><div class="quick-caption">${x[3]}</div></button>`).join('')}
+      <button class="quick-tile" data-nav="schedule"><div class="quick-icon">🗓</div><div class="quick-title">여행 일정</div><div class="quick-caption">4일 전체보기</div></button>
+      <button class="quick-tile" data-nav="routes"><div class="quick-icon">🚆</div><div class="quick-title">교통편</div><div class="quick-caption">지하철·버스</div></button>
+      <button class="quick-tile" data-place-mode="food"><div class="quick-icon">🍴</div><div class="quick-title">맛집·카페</div><div class="quick-caption">식당·디저트 추천</div></button>
+      <button class="quick-tile" data-place-mode="tourism"><div class="quick-icon">📷</div><div class="quick-title">관광지</div><div class="quick-caption">명소 추천</div></button>
+      <button class="quick-tile" data-nav="checklist"><div class="quick-icon">✅</div><div class="quick-title">체크리스트</div><div class="quick-caption">준비물 확인</div></button>
+      <button class="quick-tile" data-nav="japanese"><div class="quick-icon">あ</div><div class="quick-title">여행 일본어</div><div class="quick-caption">회화·음성</div></button>
     </div>
     <div class="day-strip">${days.map(d=>`<button class="day-tab ${d.day===day.day?'active':''}" data-day="${d.day}"><strong>DAY ${d.day}</strong>${d.title.replace(' ','')}</button>`).join('')}</div>
   </section>`);
@@ -313,7 +334,7 @@ function renderDay(){
   let body='';
   if(tab==='schedule') body=`<div class="timeline">${d.events.map(e=>`<div class="timeline-item"><div class="tl-time">${e.time}</div><div class="tl-dot">${e.icon}</div><div class="tl-card"><div class="tl-title">${e.title}</div><div class="tl-sub">${esc(e.desc)}</div>${e.route||e.place?`<div class="tl-actions">${e.route?`<button class="mini-btn accent" data-route="${e.route}">길찾기 상세</button>`:''}${e.place?`<button class="mini-btn" data-place="${e.place}">장소 상세</button>`:''}</div>`:''}</div></div>`).join('')}</div>`;
   if(tab==='food'){
-    const foodIds=d.events.filter(e=>e.place).map(e=>e.place); const ps=places.filter(p=>foodIds.includes(p.id));
+    const foodIds=d.events.filter(e=>e.place).map(e=>e.place); const ps=places.filter(p=>foodIds.includes(p.id) && ['식당','카페'].includes(p.type));
     body=`<div class="place-grid">${ps.length?ps.map(placeCard).join(''):'<div class="empty">이 날의 상세 식당/카페 카드는 일정표에서 확인해 주세요.</div>'}</div>`;
   }
   if(tab==='route'){
@@ -339,12 +360,19 @@ function renderRouteDetail(){ const r=routes[APP.state.route]; if(!r)return rend
   <button class="secondary-btn" style="width:100%;margin-top:8px" data-copy-route="${esc(r.title)}">이 경로 제목 복사</button>
   </section>`); }
 
-function placeCard(p){ return `<article class="place-card"><img class="photo" src="${p.image}" alt="${p.name}"><div class="place-card-body"><div class="place-head"><div><div class="place-name">${p.name}</div><div class="place-jp">${p.jp} · ${p.pron}</div></div><button class="heart-btn ${isFav(p.id)?'on':''}" data-fav="${p.id}">♥</button></div><div class="place-rating">★ ${p.rating}</div><div class="place-desc">${p.desc}</div><div class="place-facts"><div class="fact"><small>운영/시간</small><strong>${p.hours}</strong></div><div class="fact"><small>예상/입장</small><strong>${p.budget}</strong></div></div><div class="card-actions"><button class="primary" data-place="${p.id}">상세 보기</button><button data-map="${esc(p.map)}">지도에서 보기</button></div></div></article>`; }
-function renderPlaces(){ const f=APP.state.placeFilter; const list=f==='전체'?places:places.filter(p=>p.type===f); return shell(`<section class="page">${topbar('맛집 · 카페 · 관광지','일정에 맞춰 실제로 갈 후보만')}
-  <div class="filter-row">${['전체','관광','식당','카페'].map(x=>`<button class="filter-chip ${f===x?'active':''}" data-filter="${x}">${x}</button>`).join('')}</div><div class="place-grid">${list.map(placeCard).join('')}</div>
-  </section>`); }
+function placeCard(p){ return `<article class="place-card"><img class="photo" src="${p.image}" alt="${p.name}"><div class="place-card-body"><div class="place-head"><div><div class="place-day-badge">DAY ${p.day} · ${p.type}</div><div class="place-name">${p.name}</div><div class="place-jp">${p.jp} · ${p.pron}</div></div><button class="heart-btn ${isFav(p.id)?'on':''}" data-fav="${p.id}">♥</button></div><div class="place-rating">★ ${p.rating}</div><div class="place-desc">${p.desc}</div>${p.recommend?`<div class="place-recommend"><strong>추천 포인트</strong><span>${p.recommend}</span></div>`:''}<div class="place-facts"><div class="fact"><small>운영/시간</small><strong>${p.hours}</strong></div><div class="fact"><small>예상/입장</small><strong>${p.budget}</strong></div></div><div class="card-actions"><button class="primary" data-place="${p.id}">상세 보기</button><button data-map="${esc(p.map)}">지도에서 보기</button></div></div></article>`; }
+function renderPlaces(){
+  const mode=APP.state.placeMode || 'food';
+  const f=APP.state.placeFilter || '전체';
+  const base=mode==='tourism' ? places.filter(p=>p.type==='관광') : places.filter(p=>['식당','카페'].includes(p.type));
+  const list=(mode==='food' && f!=='전체') ? base.filter(p=>p.type===f) : base;
+  const title=mode==='tourism' ? '관광지' : '맛집 · 카페';
+  const subtitle=mode==='tourism' ? '4일 동선에 맞춰 추천하는 명소' : '점심 · 저녁 · 카페를 일정별로 추천';
+  const filters=mode==='food' ? `<div class="filter-row">${['전체','식당','카페'].map(x=>`<button class="filter-chip ${f===x?'active':''}" data-filter="${x}">${x}</button>`).join('')}</div>` : '';
+  return shell(`<section class="page">${topbar(title,subtitle)}${filters}<div class="place-grid">${list.map(placeCard).join('')}</div></section>`);
+}
 function renderPlace(){ const p=places.find(x=>x.id===APP.state.place); if(!p)return renderPlaces(); return shell(`<section class="page">${topbar('', '', true)}<img class="detail-photo" src="${p.image}" alt="${p.name}"><h1 class="detail-name">${p.name}</h1><div class="detail-jp">${p.jp} · ${p.pron}</div><div class="place-rating">★ ${p.rating}</div><p class="detail-desc">${p.desc}</p>
-  <div class="info-box"><h3>한눈에 보기</h3><div class="info-list"><div class="info-row"><span>운영/시간</span><strong>${p.hours}</strong></div><div class="info-row"><span>예상 비용</span><strong>${p.budget}</strong></div><div class="info-row"><span>위치</span><strong>${p.location}</strong></div>${p.menu?`<div class="info-row"><span>추천 메뉴</span><strong>${p.menu}</strong></div>`:''}</div></div>
+  ${p.recommend?`<div class="detail-recommend"><strong>내 추천 포인트</strong><p>${p.recommend}</p></div>`:''}<div class="info-box"><h3>한눈에 보기</h3><div class="info-list"><div class="info-row"><span>여행일</span><strong>DAY ${p.day}</strong></div><div class="info-row"><span>운영/시간</span><strong>${p.hours}</strong></div><div class="info-row"><span>예상 비용</span><strong>${p.budget}</strong></div><div class="info-row"><span>위치</span><strong>${p.location}</strong></div>${p.menu?`<div class="info-row"><span>추천 메뉴</span><strong>${p.menu}</strong></div>`:''}</div></div>
   <button class="map-btn" data-map="${esc(p.map)}">📍 Google 지도에서 보기</button><button class="secondary-btn" style="width:100%;margin-top:8px" data-fav="${p.id}">${isFav(p.id)?'♥ 저장됨':'♡ 즐겨찾기 저장'}</button></section>`); }
 
 function renderJapanese(){ const cat=APP.state.jpTab; const cats=['기본 회화','교통','식당','쇼핑','긴급상황']; const list=phrases.filter(p=>p.cat===cat); return shell(`<section class="page">${topbar('여행 일본어','화면을 보여주거나 ▶ 버튼으로 들려주세요')}
@@ -360,7 +388,7 @@ function renderChecklist(){ const g=APP.state.checkTab; const items=checklistGro
   </section>`); }
 
 function renderMore(){ return shell(`<section class="page">${topbar('더보기','여행 중 자주 쓰는 기능')}
-  <div class="quick-grid">${[['japanese','あ','여행 일본어','음성 재생'],['places','♡','맛집·관광지','상세 카드'],['info','ℹ','여행 정보','전압·통화·긴급'],['schedule','▣','전체 일정','DAY 1~4'],['routes','⌖','길찾기','역·출구 상세'],['checklist','✓','체크리스트','준비물 저장']].map(x=>`<button class="quick-tile" data-nav="${x[0]}"><div class="quick-icon">${x[1]}</div><div class="quick-title">${x[2]}</div><div class="quick-caption">${x[3]}</div></button>`).join('')}</div>
+  <div class="quick-grid"><button class="quick-tile" data-nav="japanese"><div class="quick-icon">あ</div><div class="quick-title">여행 일본어</div><div class="quick-caption">음성 재생</div></button><button class="quick-tile" data-place-mode="food"><div class="quick-icon">♡</div><div class="quick-title">맛집·카페</div><div class="quick-caption">식당·디저트</div></button><button class="quick-tile" data-place-mode="tourism"><div class="quick-icon">📷</div><div class="quick-title">관광지</div><div class="quick-caption">명소 추천</div></button><button class="quick-tile" data-nav="info"><div class="quick-icon">ℹ</div><div class="quick-title">여행 정보</div><div class="quick-caption">전압·통화·긴급</div></button><button class="quick-tile" data-nav="routes"><div class="quick-icon">⌖</div><div class="quick-title">길찾기</div><div class="quick-caption">역·출구 상세</div></button><button class="quick-tile" data-nav="checklist"><div class="quick-icon">✓</div><div class="quick-title">체크리스트</div><div class="quick-caption">준비물 저장</div></button></div>
   <div class="notice-card"><div class="notice-icon">📶</div><div><div class="notice-title">PWA 오프라인 캐시 적용</div><div class="notice-copy">한 번 접속한 뒤에는 핵심 화면과 이미지가 캐시됩니다. 지도 열기는 인터넷 연결이 필요합니다.</div></div></div>
   </section>`); }
 function renderInfo(){ return shell(`<section class="page">${topbar('여행 정보','10월 하순 삿포로 자유여행 메모',true)}
@@ -395,6 +423,7 @@ function render(){
 }
 function bind(){
   qa('[data-nav]').forEach(b=>b.onclick=()=>go(b.dataset.nav));
+  qa('[data-place-mode]').forEach(b=>b.onclick=()=>go('places',{placeMode:b.dataset.placeMode,placeFilter:'전체'}));
   qa('[data-day]').forEach(b=>b.onclick=()=>go('day',{day:Number(b.dataset.day),dayTab:'schedule'}));
   qa('[data-daytab]').forEach(b=>b.onclick=()=>replaceViewState({dayTab:b.dataset.daytab}));
   qa('[data-route]').forEach(b=>b.onclick=()=>go('route',{route:b.dataset.route}));
@@ -443,6 +472,6 @@ window.addEventListener('popstate',e=>{
   render();
   window.scrollTo({top:0,behavior:'auto'});
 });
-if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js?v=2').catch(()=>{});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js?v=3').catch(()=>{});
 initNavigation();
 render();

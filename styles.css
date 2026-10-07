@@ -141,3 +141,16 @@ img{display:block;max-width:100%}
   .compact-home-grid .today-launch{max-width:520px;margin-top:0}
   .home-quick-grid{grid-template-columns:repeat(6,1fr)}
 }
+
+
+/* v7 · 내 장소 AI 사진 분석 */
+.ai-place-tip{display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:start;background:linear-gradient(135deg,#f5f0ff,#fff8f1);border:1px solid #e7dcf5;border-radius:16px;padding:11px;margin:9px 0 11px}
+.ai-place-tip-icon{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:#fff;color:#7652a8;font-size:17px}
+.ai-place-tip strong{display:block;font-size:10.5px;color:#533d74}.ai-place-tip span{display:block;font-size:8.5px;line-height:1.55;color:#746b7c;margin-top:3px}
+.ai-place-status{grid-column:1/-1;display:grid;grid-template-columns:32px 1fr auto;gap:8px;align-items:center;border-radius:14px;padding:10px 11px;border:1px solid #eadfd7;background:#faf8f6}
+.ai-place-status>span{font-size:17px}.ai-place-status strong{display:block;font-size:9.5px}.ai-place-status small{display:block;font-size:8px;color:var(--muted);line-height:1.45;margin-top:2px}
+.ai-place-status.loading{background:#f3f7ff;border-color:#d8e4f8}.ai-place-status.loading>span{animation:aiPulse 1s ease-in-out infinite}
+.ai-place-status.done{background:#eef9f0;border-color:#cae6cf}.ai-place-status.done strong{color:#3f7a4a}
+.ai-place-status.error{background:#fff5f2;border-color:#f1d1c8}.ai-place-status.error strong{color:#a64f3d}
+.mini-ai-btn{border:1px solid #dfd1c7;background:#fff;border-radius:10px;padding:7px 8px;font-size:8px;font-weight:900;color:var(--ink)}
+@keyframes aiPulse{0%,100%{transform:scale(1);opacity:.65}50%{transform:scale(1.16);opacity:1}}

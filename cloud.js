@@ -1,4 +1,4 @@
-// SAPPORO FAMILY TRIP v6 · Supabase cloud adapter · lazy SDK loading
+// SAPPORO FAMILY TRIP v7 · Supabase cloud adapter · lazy SDK loading
 window.SapporoCloud = (() => {
   let client = null;
   let sdkPromise = null;
@@ -42,9 +42,19 @@ window.SapporoCloud = (() => {
     const payload={user_id:user.id,name:item.name,category:item.category,area:item.area||'',source_url:item.sourceUrl||'',source_type:item.sourceType||'',note:item.note||'',day_candidate:day,favorite:item.favorite!==false,image_path:imagePath||null};
     const {data,error}=await c.from('saved_places').insert(payload).select('*').single(); if(error)throw error; return {...data,image_url:imagePath?await signedImage(imagePath):''};
   }
+
+  async function analyzePlaceImage(imageDataUrl){
+    const c=await getClient(); await requireUser();
+    if(!imageDataUrl) throw new Error('분석할 사진이 없습니다');
+    const {data,error}=await c.functions.invoke('analyze-place',{body:{imageDataUrl}});
+    if(error) throw error;
+    if(!data?.ok) throw new Error(data?.error||'AI 분석 응답이 올바르지 않습니다');
+    return data.result||{};
+  }
+
   async function deletePlace(id,imagePath=''){
     const c=await getClient(); await requireUser(); if(imagePath){const {error:sErr}=await c.storage.from('place-images').remove([imagePath]); if(sErr)console.warn(sErr)} const {error}=await c.from('saved_places').delete().eq('id',id); if(error)throw error;
   }
-  return {configured,getSession,sendMagicLink,signOut,onAuthChange,listPlaces,savePlace,deletePlace};
+  return {configured,getSession,sendMagicLink,signOut,onAuthChange,listPlaces,savePlace,deletePlace,analyzePlaceImage};
 })();
 window.dispatchEvent(new Event('sapporo-cloud-ready'));

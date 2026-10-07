@@ -1,4 +1,4 @@
-// SAPPORO FAMILY TRIP v6 · 2026-10-08 · compact home + fast launch
+// SAPPORO FAMILY TRIP v7 · 2026-10-08 · compact home + fast launch
 const APP = {
   tripStart: new Date('2026-10-20T00:00:00+09:00'),
   tripEnd: new Date('2026-10-23T23:59:59+09:00'),
@@ -334,10 +334,10 @@ function renderHome(){
     <div class="day-strip home-day-strip">${days.map(d=>`<button class="day-tab ${d.day===day.day?'active':''}" data-day="${d.day}"><strong>DAY ${d.day}</strong>${d.title.replace(' ','')}</button>`).join('')}</div>
     <div class="tool-grid home-tool-grid">
       <button class="tool-tile" data-nav="maps"><span>🗺️</span><div><strong>Google 지도</strong><small>여행지 바로 열기</small></div></button>
-      <button class="tool-tile" data-nav="favorites"><span>♥</span><div><strong>즐겨찾기</strong><small>저장한 장소 모아보기</small></div></button>
+      <button class="tool-tile" data-nav="myplaces"><span>＋</span><div><strong>내 장소</strong><small>인스타 · 웹 맛집 저장</small></div></button>
       <button class="tool-tile" data-nav="memo"><span>✎</span><div><strong>여행 메모</strong><small>날짜별 자동 저장</small></div></button>
       <button class="tool-tile" data-nav="expenses"><span>¥</span><div><strong>여행 경비</strong><small>예산 · 사용 · 잔액</small></div></button>
-      <button class="tool-tile" data-nav="myplaces"><span>＋</span><div><strong>내 장소</strong><small>인스타 · 웹 맛집 저장</small></div></button>
+      <button class="tool-tile" data-nav="favorites"><span>♥</span><div><strong>즐겨찾기</strong><small>저장한 장소 모아보기</small></div></button>
     </div>
   </section>`);
 }
@@ -456,16 +456,64 @@ function renderMyPlaces(){
   else cloud=`<div class="cloud-card ok"><strong>✓ 클라우드 동기화 중</strong><p>${esc(APP.cloudSession.user.email||'로그인됨')}</p><div class="saved-place-actions"><button id="cloudSync">지금 동기화</button><button id="cloudSignout">로그아웃</button></div></div>`;
   return shell(`<section class="page">${topbar('내 장소','인스타·웹에서 찾은 맛집과 카페를 저장해요',true)}
     ${cloud}
-    <div class="saved-place-form"><h3>+ 새 장소 추가</h3><div class="saved-place-form-grid"><input id="userPlaceName" placeholder="장소명 *"><select id="userPlaceCategory"><option>맛집</option><option>카페</option><option>관광</option><option>쇼핑</option></select><input id="userPlaceArea" placeholder="지역 예: 삿포로 오도리"><select id="userPlaceDay"><option>미정</option><option>DAY 1</option><option>DAY 2</option><option>DAY 3</option><option>DAY 4</option></select><input id="userPlaceUrl" type="url" placeholder="인스타 / 블로그 / Google Maps 링크"><textarea id="userPlaceNote" placeholder="메모 · 추천 메뉴 · 꼭 먹고 싶은 것"></textarea><label class="upload-box"><span>📷 스크린샷 첨부</span><small>인스타 캡처나 메뉴 사진을 넣어두세요</small><input id="userPlaceImage" type="file" accept="image/*"></label><label class="favorite-check"><input id="userPlaceFavorite" type="checkbox" checked> ♥ 즐겨찾기로 저장</label></div><button class="primary-btn full" id="saveUserPlace">장소 저장</button></div>
+    <div class="saved-place-form"><h3>+ 새 장소 추가</h3>
+      <div class="ai-place-tip"><div class="ai-place-tip-icon">✨</div><div><strong>사진만 올려도 AI가 먼저 읽어요</strong><span>Supabase 로그인 후 스크린샷을 선택하면 매장명 · 카테고리 · 지역 · 보이는 메뉴/정보를 자동으로 채웁니다. 결과는 저장 전에 한 번 확인해 주세요.</span></div></div>
+      <div class="saved-place-form-grid"><input id="userPlaceName" placeholder="장소명 *"><select id="userPlaceCategory"><option>맛집</option><option>카페</option><option>관광</option><option>쇼핑</option></select><input id="userPlaceArea" placeholder="지역 예: 삿포로 오도리"><select id="userPlaceDay"><option>미정</option><option>DAY 1</option><option>DAY 2</option><option>DAY 3</option><option>DAY 4</option></select><input id="userPlaceUrl" type="url" placeholder="인스타 / 블로그 / Google Maps 링크"><textarea id="userPlaceNote" placeholder="메모 · 추천 메뉴 · 꼭 먹고 싶은 것"></textarea><label class="upload-box ai-upload-box"><span>📷 스크린샷 첨부</span><small>사진을 고르면 AI 자동 분석이 시작됩니다.</small><input id="userPlaceImage" type="file" accept="image/*"></label><div id="aiPlaceStatus" class="ai-place-status idle"><span>✨</span><div><strong>AI 자동 읽기 대기</strong><small>사진을 선택하면 자동으로 분석합니다.</small></div><button type="button" id="reanalyzePlaceImage" class="mini-ai-btn" hidden>다시 분석</button></div><label class="favorite-check"><input id="userPlaceFavorite" type="checkbox" checked> ♥ 즐겨찾기로 저장</label></div><button class="primary-btn full" id="saveUserPlace">장소 저장</button></div>
     <div class="memo-tabs">${cats.map(x=>`<button class="memo-tab ${x===filter?'active':''}" data-userplace-filter="${x}">${x}</button>`).join('')}</div>
     <div class="section-label"><h2>저장한 장소</h2><span class="status-pill">${list.length}곳</span></div>
     <div class="saved-place-list">${list.length?list.map(userPlaceCard).join(''):`<div class="empty-state"><div class="empty-ico">📌</div><strong>아직 저장한 장소가 없어요</strong><p>인스타 링크, 인터넷 주소, 스크린샷을 함께 저장해 두면 현장에서 바로 찾을 수 있어요.</p></div>`}</div>
   </section>`);
 }
+
+let pendingUserPlaceImage = null;
+function setAiPlaceStatus(kind,title,detail=''){
+  const box=q('#aiPlaceStatus'); if(!box)return;
+  box.className=`ai-place-status ${kind}`;
+  const strong=box.querySelector('strong'); const small=box.querySelector('small');
+  if(strong) strong.textContent=title;
+  if(small) small.textContent=detail;
+  const retry=q('#reanalyzePlaceImage'); if(retry) retry.hidden = !['error','done'].includes(kind);
+}
+function fillPlaceFromAI(result={}){
+  const set=(sel,val)=>{const el=q(sel); if(el && val && !String(el.value||'').trim()) el.value=val;};
+  set('#userPlaceName',result.name);
+  const cat=q('#userPlaceCategory');
+  if(cat && ['맛집','카페','관광','쇼핑'].includes(result.category||'')) cat.value=result.category;
+  set('#userPlaceArea',result.area);
+  const noteParts=[];
+  if(result.summary) noteParts.push(result.summary);
+  if(result.visible_menu) noteParts.push(`보이는 메뉴/정보: ${result.visible_menu}`);
+  if(result.hours_or_price) noteParts.push(`영업/가격: ${result.hours_or_price}`);
+  const note=q('#userPlaceNote');
+  if(noteParts.length && note && !note.value.trim()) note.value=noteParts.join('\n');
+}
+async function analyzeSelectedPlaceImage(){
+  const file=q('#userPlaceImage')?.files?.[0]||null;
+  if(!file){ setAiPlaceStatus('idle','AI 자동 읽기 대기','사진을 선택하면 자동으로 분석합니다.'); return; }
+  if(!cloudConfigured()){ setAiPlaceStatus('error','Supabase 연결이 먼저 필요해요','클라우드 연결이 끝나면 사진 선택 즉시 AI 분석이 시작됩니다.'); return; }
+  if(!cloudSignedIn()){ setAiPlaceStatus('error','클라우드 로그인이 필요해요','위의 이메일 로그인 후 같은 사진을 다시 선택하거나 ‘다시 분석’을 눌러주세요.'); return; }
+  try{
+    setAiPlaceStatus('loading','AI가 사진을 읽는 중…','매장명과 화면에 보이는 정보를 확인하고 있어요.');
+    const packed=await compressImage(file,1200,.72);
+    pendingUserPlaceImage={file,packed};
+    const result=await window.SapporoCloud.analyzePlaceImage(packed.dataUrl);
+    fillPlaceFromAI(result||{});
+    const confidence=Number(result?.confidence||0);
+    const suffix=confidence ? ` · 신뢰도 ${Math.round(confidence*100)}%` : '';
+    setAiPlaceStatus('done','AI 분석 완료'+suffix,'자동으로 채운 내용을 확인한 뒤 저장해 주세요.');
+  }catch(e){
+    console.warn('AI place analysis',e);
+    setAiPlaceStatus('error','AI 분석에 실패했어요',e?.message||'잠시 후 다시 시도해 주세요.');
+  }
+}
+
 async function saveUserPlaceFromForm(){
   const name=q('#userPlaceName')?.value.trim(); if(!name){toast('장소명을 입력해 주세요');return;}
   const file=q('#userPlaceImage')?.files?.[0]||null; let packed={blob:null,dataUrl:''};
-  try{ if(file) packed=await compressImage(file); }catch(e){console.warn(e);toast('이미지 처리에 실패했어요');return;}
+  try{
+    if(file && pendingUserPlaceImage?.file===file) packed=pendingUserPlaceImage.packed;
+    else if(file) packed=await compressImage(file);
+  }catch(e){console.warn(e);toast('이미지 처리에 실패했어요');return;}
   const item={id:`local-${Date.now()}`,synced:false,name,category:q('#userPlaceCategory').value,area:q('#userPlaceArea').value.trim(),dayCandidate:q('#userPlaceDay').value,sourceUrl:q('#userPlaceUrl').value.trim(),sourceType:sourceLabel(q('#userPlaceUrl').value.trim()),note:q('#userPlaceNote').value.trim(),favorite:q('#userPlaceFavorite').checked,image:packed.dataUrl,imagePath:'',createdAt:new Date().toISOString()};
   const local=getUserPlaces(); local.unshift(item); saveUserPlaces(local); toast('장소를 저장했어요'); render();
   if(cloudConfigured() && cloudSignedIn()){
@@ -593,6 +641,8 @@ function bind(){
   qa('[data-userplace-filter]').forEach(b=>b.onclick=()=>replaceViewState({myPlaceFilter:b.dataset.userplaceFilter}));
   qa('[data-open-url]').forEach(b=>b.onclick=()=>window.open(b.dataset.openUrl,'_blank','noopener'));
   qa('[data-user-place-delete]').forEach(b=>b.onclick=async()=>{const id=b.dataset.userPlaceDelete;const item=getUserPlaces().find(x=>String(x.id)===String(id));if(item?.cloudId&&cloudConfigured()&&cloudSignedIn()){try{await window.SapporoCloud.deletePlace(item.cloudId,item.imagePath||'')}catch(e){console.warn(e)}}saveUserPlaces(getUserPlaces().filter(x=>String(x.id)!==String(id)));toast('장소를 삭제했어요');render();});
+  const imgUP=q('#userPlaceImage'); if(imgUP) imgUP.onchange=()=>{pendingUserPlaceImage=null;analyzeSelectedPlaceImage();};
+  const retryAI=q('#reanalyzePlaceImage'); if(retryAI) retryAI.onclick=analyzeSelectedPlaceImage;
   const saveUP=q('#saveUserPlace'); if(saveUP) saveUP.onclick=saveUserPlaceFromForm;
   const cloudLogin=q('#cloudLogin'); if(cloudLogin) cloudLogin.onclick=async()=>{const email=q('#cloudEmail').value.trim();if(!email){toast('이메일을 입력해 주세요');return;}try{await window.SapporoCloud.sendMagicLink(email);toast('이메일로 로그인 링크를 보냈어요');}catch(e){console.warn(e);toast('로그인 링크 전송에 실패했어요');}};
   const cloudSync=q('#cloudSync'); if(cloudSync) cloudSync.onclick=pushUnsyncedPlaces;

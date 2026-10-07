@@ -1,0 +1,15 @@
+{
+  "name": "SAPPORO FAMILY TRIP 2026",
+  "short_name": "삿포로 여행",
+  "description": "2026년 10월 가족 삿포로 3박 4일 자유여행 가이드",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff8ef",
+  "theme_color": "#f56a31",
+  "orientation": "portrait-primary",
+  "icons": [
+    {"src":"./assets/icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"./assets/icon-512.png","sizes":"512x512","type":"image/png"}
+  ]
+}

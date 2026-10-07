@@ -1,4 +1,4 @@
-// SAPPORO FAMILY TRIP v5 · 2026-10-08 · cloud place collector + v4 feature carryover
+// SAPPORO FAMILY TRIP v6 · 2026-10-08 · compact home + fast launch
 const APP = {
   tripStart: new Date('2026-10-20T00:00:00+09:00'),
   tripEnd: new Date('2026-10-23T23:59:59+09:00'),
@@ -310,16 +310,20 @@ function bottomNav(active){ return `<nav class="bottom-nav">${navItems.map(([v,i
 function topbar(title='',subtitle='',back=false){ return `<div class="topbar">${back?`<button class="back-btn" data-back>‹</button>`:`<div class="brand-lockup"><img src="./assets/icon-192.png"><div><div class="brand-title">SAPPORO</div><div class="brand-sub">FAMILY TRIP</div></div></div>`}<div style="flex:1">${title?`<h1 class="page-title">${title}</h1><div class="page-subtitle">${subtitle}</div>`:''}</div>${back?'':'<button class="icon-btn" data-nav="info" aria-label="여행정보">⚙</button>'}</div>`; }
 
 function renderHome(){
-  const status=tripStatus(); const day=getDay(status.day); const events=status.mode==='during'?currentEvents(status.day):day.events.slice(1,4);
-  return shell(`<section class="page">${topbar()}
-    <div class="home-grid-desktop">
-      <article class="hero"><img class="hero-bg" src="${day.image}" alt="${day.title}"><div class="hero-overlay"></div><div class="hero-content">
+  const status=tripStatus(); const day=getDay(status.day);
+  return shell(`<section class="page home-page">${topbar()}
+    <div class="home-grid-desktop compact-home-grid">
+      <article class="hero compact-hero"><img class="hero-bg" src="${day.image}" alt="${day.title}"><div class="hero-overlay"></div><div class="hero-content">
         <div><span class="hero-kicker">🍁 ${status.label}</span><h1>SAPPORO</h1><div class="trip-dates">2026. 10. 20 - 10. 23 · 3박 4일</div></div>
-        <div class="hero-lower"><div><div class="hero-day">TODAY / START</div><div class="hero-place">DAY ${day.day}<br>${day.title}</div></div><img class="hero-bichon" src="./assets/bichon-home.jpg" alt="미니비숑 캐릭터"></div>
+        <div class="hero-lower"><div><div class="hero-day">${status.mode==='before'?'TRIP START':'TODAY'}</div><div class="hero-place">DAY ${day.day}<br>${day.title}</div></div><img class="hero-bichon" src="./assets/bichon-home.jpg" alt="미니비숑 캐릭터"></div>
       </div></article>
-      <article class="next-card"><div class="section-label"><h2>${status.mode==='before'?'출발하면 먼저':'다음 일정'}</h2><button class="small-link" data-day="${day.day}">전체 보기 ›</button></div><div class="mini-schedule">${events.map(e=>`<div class="mini-row"><span class="time-chip">${e.time}</span><div><div class="mini-title">${e.icon} ${e.title}</div><div class="mini-desc">${esc(e.desc.split('\n')[0])}</div></div><span class="arrow">›</span></div>`).join('')}</div><button class="primary-btn" style="width:100%;margin-top:11px" data-day="${day.day}">오늘 일정 보기 ›</button></article>
+      <button class="today-launch" data-day="${day.day}">
+        <span class="today-launch-icon">🗓</span>
+        <span class="today-launch-copy"><strong>오늘 일정 보기</strong><small>DAY ${day.day} · ${day.title} 일정 바로 열기</small></span>
+        <span class="today-launch-arrow">›</span>
+      </button>
     </div>
-    <div class="quick-grid">
+    <div class="quick-grid home-quick-grid">
       <button class="quick-tile" data-nav="schedule"><div class="quick-icon">🗓</div><div class="quick-title">여행 일정</div><div class="quick-caption">4일 전체보기</div></button>
       <button class="quick-tile" data-nav="routes"><div class="quick-icon">🚆</div><div class="quick-title">교통편</div><div class="quick-caption">지하철·버스</div></button>
       <button class="quick-tile" data-place-mode="food"><div class="quick-icon">🍴</div><div class="quick-title">맛집·카페</div><div class="quick-caption">식당·디저트 추천</div></button>
@@ -327,8 +331,8 @@ function renderHome(){
       <button class="quick-tile" data-nav="checklist"><div class="quick-icon">✅</div><div class="quick-title">체크리스트</div><div class="quick-caption">준비물 확인</div></button>
       <button class="quick-tile" data-nav="japanese"><div class="quick-icon">あ</div><div class="quick-title">여행 일본어</div><div class="quick-caption">회화·음성</div></button>
     </div>
-    <div class="day-strip">${days.map(d=>`<button class="day-tab ${d.day===day.day?'active':''}" data-day="${d.day}"><strong>DAY ${d.day}</strong>${d.title.replace(' ','')}</button>`).join('')}</div>
-    <div class="tool-grid">
+    <div class="day-strip home-day-strip">${days.map(d=>`<button class="day-tab ${d.day===day.day?'active':''}" data-day="${d.day}"><strong>DAY ${d.day}</strong>${d.title.replace(' ','')}</button>`).join('')}</div>
+    <div class="tool-grid home-tool-grid">
       <button class="tool-tile" data-nav="maps"><span>🗺️</span><div><strong>Google 지도</strong><small>여행지 바로 열기</small></div></button>
       <button class="tool-tile" data-nav="favorites"><span>♥</span><div><strong>즐겨찾기</strong><small>저장한 장소 모아보기</small></div></button>
       <button class="tool-tile" data-nav="memo"><span>✎</span><div><strong>여행 메모</strong><small>날짜별 자동 저장</small></div></button>
@@ -628,7 +632,9 @@ window.addEventListener('popstate',e=>{
   render();
   window.scrollTo({top:0,behavior:'auto'});
 });
-if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js?v=5').catch(()=>{});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js?v=6').catch(()=>{});
+window.addEventListener('sapporo-cloud-ready',()=>initCloud());
 initNavigation();
 render();
-initCloud();
+// 클라우드는 첫 화면 렌더 후 지연 초기화하여 앱 시작 속도를 우선합니다.
+setTimeout(()=>initCloud(),0);

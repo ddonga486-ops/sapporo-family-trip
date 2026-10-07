@@ -1,8 +1,9 @@
+// SAPPORO FAMILY TRIP v5 · 2026-10-08 · cloud place collector + v4 feature carryover
 const APP = {
   tripStart: new Date('2026-10-20T00:00:00+09:00'),
   tripEnd: new Date('2026-10-23T23:59:59+09:00'),
   installPrompt: null,
-  state: { view: 'home', day: 1, dayTab: 'schedule', placeMode: 'food', placeFilter: '전체', jpTab: '기본 회화', checkTab: '출발 전' }
+  state: { view: 'home', day: 1, dayTab: 'schedule', placeMode: 'food', placeFilter: '전체', jpTab: '기본 회화', checkTab: '출발 전', memoTab: '전체', myPlaceFilter: '전체' }
 };
 
 const days = [
@@ -14,13 +15,13 @@ const days = [
       {time:'11:15',icon:'🧳',title:'공항에서 캐리어 숙소 배송',desc:'캐리어만 소테츠 프레사 인 삿포로 스스키노로 당일 배송\n가족은 숙소에 들르지 않음',route:'airport-otaru'},
       {time:'11:35',icon:'🚆',title:'신치토세공항 → 바로 오타루',desc:'快速エアポート(카이소쿠 에아포토) · 小樽行き(오타루유키) 직통 우선',route:'airport-otaru'},
       {time:'13:00',icon:'🍗',title:'나루토 본점 점심',desc:'닭 반마리 튀김 + 초밥/해산물',place:'naruto'},
-      {time:'14:05',icon:'📷',title:'오타루 운하 산책',desc:'가을 운하 사진 · 창고거리',place:'otaru-canal'},
-      {time:'14:35',icon:'🍁',title:'사카이마치 거리',desc:'상점가 · 기념품 구경',place:'sakaimachi'},
-      {time:'15:20',icon:'🎵',title:'오타루 오르골당',desc:'오르골 · 기념품 관람',place:'music-box'},
-      {time:'16:00',icon:'🍰',title:'LeTAO PATHOS',desc:'치즈케이크 · 커피 휴식',place:'letao'},
-      {time:'17:10',icon:'🚆',title:'미나미오타루 → 삿포로',desc:'南小樽駅 → JR札幌駅',route:'otaru-hotel'},
-      {time:'18:35',icon:'🏨',title:'호텔 체크인 · 캐리어 수령',desc:'이때 처음 숙소 방문'},
-      {time:'19:20',icon:'🍛',title:'스프카레 Suage+',desc:'닭고기·채소 스프카레',place:'suage'}
+      {time:'14:05',icon:'🍁',title:'사카이마치 거리',desc:'상점가 · 기념품 · 유리공예 구경',place:'sakaimachi'},
+      {time:'14:50',icon:'🎵',title:'오타루 오르골당',desc:'오르골 · 기념품 관람',place:'music-box'},
+      {time:'15:25',icon:'🍰',title:'LeTAO PATHOS',desc:'치즈케이크 · 커피 휴식',place:'letao'},
+      {time:'16:20',icon:'🌇',title:'오타루 운하 · 노을 산책',desc:'10/20 일몰 약 16:45 전후 · 노을에서 가스등 켜지는 시간까지 감상',place:'otaru-canal'},
+      {time:'17:20',icon:'🚆',title:'오타루 → 삿포로',desc:'운하에서 오타루역으로 이동 → 다음 삿포로행 JR 탑승',route:'otaru-hotel'},
+      {time:'18:50',icon:'🏨',title:'호텔 체크인 · 캐리어 수령',desc:'이때 처음 숙소 방문'},
+      {time:'19:30',icon:'🍛',title:'스프카레 Suage+',desc:'닭고기·채소 스프카레',place:'suage'}
     ]
   },
   {
@@ -89,10 +90,11 @@ const routes = {
     ]
   },
   'otaru-hotel':{
-    title:'미나미오타루 → 호텔',tag:'DAY 1 · 저녁',time:'약 60~75분',fare:'JR + 지하철',map:'https://www.google.com/maps/dir/?api=1&origin=Minami-Otaru+Station&destination=Sotetsu+Fresa+Inn+Sapporo-Susukino&travelmode=transit',tip:'오르골당·르타오를 본 뒤에는 오타루역으로 되돌아가기보다 미나미오타루역이 편합니다.',
+    title:'오타루 운하 → 호텔',tag:'DAY 1 · 노을 후 이동',time:'약 70~90분',fare:'도보 + JR + 지하철',map:'https://www.google.com/maps/dir/?api=1&origin=Otaru+Canal&destination=Sotetsu+Fresa+Inn+Sapporo-Susukino&travelmode=transit',tip:'운하 노을을 본 뒤에는 미나미오타루역으로 되돌아가지 않고 오타루역으로 이동해 삿포로로 넘어갑니다.',
     steps:[
-      ['미나미오타루역 이동','南小樽駅','미나미오타루에키','미나미오타루역','르타오에서 도보 약 10~15분.'],
-      ['삿포로 방향 JR 탑승','札幌方面','삿포로 호멘','삿포로 방면','전광판에서 札幌 방향을 확인하고 탑승해요.'],
+      ['운하에서 노을 감상','小樽運河','오타루 운가','오타루 운하','16:20 전후 도착해 노을과 가스등이 켜지는 분위기를 함께 봅니다.'],
+      ['오타루역으로 이동','小樽駅','오타루에키','오타루역','운하 중앙부에서 오타루역까지 도보 약 10~15분.'],
+      ['삿포로 방향 JR 탑승','札幌方面','삿포로 호멘','삿포로 방면','전광판에서 札幌 방향을 확인하고 가장 가까운 열차를 이용해요.'],
       ['JR삿포로역 하차','札幌駅','삿포로에키','삿포로역','JR 개찰 밖으로 나온 뒤 地下鉄 東豊線 표지를 찾습니다.'],
       ['도호선 후쿠즈미 방면','東豊線 福住方面','도호센 후쿠즈미 호멘','도호선 후쿠즈미 방면','지하철 さっぽろ駅에서 탑승해 2정거장 이동.'],
       ['호스이스스키노 4번 출구','豊水すすきの駅 4番出口','호스이스스키노에키 욘반 데구치','호스이스스키노역 4번 출구','4번 출구에서 호텔까지 약 1분. 저녁에 처음 체크인합니다.']
@@ -149,7 +151,7 @@ const routes = {
 
 const places = [
   // 관광지 추천
-  {id:'otaru-canal',day:1,type:'관광',name:'오타루 운하',jp:'小樽運河',pron:'오타루 운가',image:'./assets/otaru-canal.jpg',rating:'DAY 1 · 필수',hours:'24시간 산책 가능',budget:'무료',location:'오타루역 도보권',desc:'오타루에서 가장 먼저 추천하는 산책 코스. 가을빛과 석조 창고가 어우러져 첫날 사진을 남기기 좋습니다.',recommend:'나루토에서 점심을 먹은 뒤 사카이마치로 내려가기 전에 30분 정도 걷는 동선이 가장 편합니다.',map:'https://www.google.com/maps/search/?api=1&query=Otaru+Canal'},
+  {id:'otaru-canal',day:1,type:'관광',name:'오타루 운하',jp:'小樽運河',pron:'오타루 운가',image:'./assets/otaru-canal.jpg',rating:'DAY 1 · 필수',hours:'24시간 산책 가능',budget:'무료',location:'오타루역 도보권',desc:'첫날 오타루의 마지막 관광 코스로 보는 운하. 10월 20일 일몰은 약 16:45 전후라 노을에서 가스등이 켜지는 분위기까지 이어서 보기 좋습니다.',recommend:'사카이마치·오르골당·르타오를 먼저 보고 16:20 전후 운하로 이동해 노을을 본 뒤 오타루역으로 가는 순서를 추천합니다.',map:'https://www.google.com/maps/search/?api=1&query=Otaru+Canal'},
   {id:'sakaimachi',day:1,type:'관광',name:'사카이마치 거리',jp:'堺町通り',pron:'사카이마치도리',image:'./assets/day1-otaru.jpg',rating:'DAY 1 · 산책/쇼핑',hours:'상점별 상이',budget:'산책 무료',location:'오타루 운하~오르골당 사이',desc:'약 900m 이어지는 오타루 대표 상점가. 유리공예, 과자, 카페, 기념품점이 몰려 있어 자유여행 동선이 단순합니다.',recommend:'운하 → 사카이마치 → 오르골당 → 르타오 순서로 한 방향으로 내려가면 되돌아갈 일이 거의 없습니다.',map:'https://www.google.com/maps/search/?api=1&query=Otaru+Sakaimachi+Street'},
   {id:'music-box',day:1,type:'관광',name:'오타루 오르골당 본관',jp:'小樽オルゴール堂 本館',pron:'오타루 오루고루도 혼칸',image:'./assets/day1-otaru.jpg',rating:'DAY 1 · 가족 추천',hours:'방문 전 당일 영업시간 확인',budget:'입장 무료',location:'사카이마치 남쪽 끝',desc:'오타루 특유의 분위기를 가장 쉽게 느끼기 좋은 장소. 건물 앞 증기시계와 내부 오르골 구경만으로도 아이들과 보기 좋습니다.',recommend:'르타오와 매우 가까워 두 곳을 묶어서 보고 미나미오타루역으로 이동하는 코스를 추천합니다.',map:'https://www.google.com/maps/search/?api=1&query=Otaru+Music+Box+Museum'},
   {id:'jozankei-shrine',day:2,type:'관광',name:'조잔케이 신사',jp:'定山渓神社',pron:'조잔케이 진자',image:'./assets/day2-jozankei.jpg',rating:'DAY 2 · 단풍',hours:'상시 참배 가능 구역',budget:'무료',location:'定山渓神社前 정류장 인근',desc:'갓파라이너에서 내린 뒤 바로 들르기 좋은 작은 신사. 붉고 노란 단풍이 어우러지는 10월 산책 포인트입니다.',recommend:'버스에서 내리자마자 먼저 보고 후타미공원으로 이동하면 동선 낭비가 없습니다.',map:'https://www.google.com/maps/search/?api=1&query=Jozankei+Shrine'},
@@ -228,7 +230,7 @@ function stateFromUrl(){
   const raw = location.hash.replace(/^#/, '');
   const [viewRaw, valueRaw] = raw.split('/');
   const view = viewRaw || 'home';
-  const topViews = ['home','schedule','routes','places','japanese','checklist','more','info'];
+  const topViews = ['home','schedule','routes','places','japanese','checklist','more','info','maps','favorites','memo','expenses','myplaces'];
   if(topViews.includes(view)) return {view};
   if(view === 'day') return {view:'day', day:Math.min(4, Math.max(1, Number(valueRaw) || 1)), dayTab:'schedule'};
   if(view === 'route' && valueRaw) return {view:'route', route:decodeURIComponent(valueRaw)};
@@ -285,7 +287,7 @@ function currentEvents(day){
 function iconForType(t){return ({관광:'📷',식당:'🍴',카페:'🍰'}[t]||'📍');}
 
 function shell(content){
-  const active = ['day','place','japanese','info'].includes(APP.state.view) ? (APP.state.view==='day'?'schedule':APP.state.view==='place'?'schedule':'more') : APP.state.view;
+  const active = ['day','place','japanese','info','maps','favorites','memo','expenses','myplaces'].includes(APP.state.view) ? (APP.state.view==='day'?'schedule':APP.state.view==='place'?'schedule':'more') : APP.state.view;
   return `<div class="app-shell">
     <aside class="desktop-rail">
       <div class="desktop-brand"><img src="./assets/icon-192.png"><div><strong>SAPPORO</strong><small>FAMILY TRIP 2026</small></div></div>
@@ -293,6 +295,11 @@ function shell(content){
         <button class="desktop-nav-btn ${APP.state.view==='japanese'?'active':''}" data-nav="japanese"><span>あ</span>여행 일본어</button>
         <button class="desktop-nav-btn ${APP.state.view==='places' && APP.state.placeMode==='food'?'active':''}" data-place-mode="food"><span>♡</span>맛집·카페</button>
         <button class="desktop-nav-btn ${APP.state.view==='places' && APP.state.placeMode==='tourism'?'active':''}" data-place-mode="tourism"><span>◉</span>관광지</button>
+        <button class="desktop-nav-btn ${APP.state.view==='maps'?'active':''}" data-nav="maps"><span>⌖</span>Google 지도</button>
+        <button class="desktop-nav-btn ${APP.state.view==='favorites'?'active':''}" data-nav="favorites"><span>♥</span>즐겨찾기</button>
+        <button class="desktop-nav-btn ${APP.state.view==='memo'?'active':''}" data-nav="memo"><span>✎</span>메모</button>
+        <button class="desktop-nav-btn ${APP.state.view==='expenses'?'active':''}" data-nav="expenses"><span>¥</span>여행 경비</button>
+        <button class="desktop-nav-btn ${APP.state.view==='myplaces'?'active':''}" data-nav="myplaces"><span>＋</span>내 장소</button>
       </div>
       <div class="desktop-trip-card"><strong>2026.10.20 - 10.23</strong><p>가족과 함께하는 3박 4일 가을 삿포로 자유여행</p><img src="./assets/bichon-home.jpg"></div>
     </aside>
@@ -321,6 +328,13 @@ function renderHome(){
       <button class="quick-tile" data-nav="japanese"><div class="quick-icon">あ</div><div class="quick-title">여행 일본어</div><div class="quick-caption">회화·음성</div></button>
     </div>
     <div class="day-strip">${days.map(d=>`<button class="day-tab ${d.day===day.day?'active':''}" data-day="${d.day}"><strong>DAY ${d.day}</strong>${d.title.replace(' ','')}</button>`).join('')}</div>
+    <div class="tool-grid">
+      <button class="tool-tile" data-nav="maps"><span>🗺️</span><div><strong>Google 지도</strong><small>여행지 바로 열기</small></div></button>
+      <button class="tool-tile" data-nav="favorites"><span>♥</span><div><strong>즐겨찾기</strong><small>저장한 장소 모아보기</small></div></button>
+      <button class="tool-tile" data-nav="memo"><span>✎</span><div><strong>여행 메모</strong><small>날짜별 자동 저장</small></div></button>
+      <button class="tool-tile" data-nav="expenses"><span>¥</span><div><strong>여행 경비</strong><small>예산 · 사용 · 잔액</small></div></button>
+      <button class="tool-tile" data-nav="myplaces"><span>＋</span><div><strong>내 장소</strong><small>인스타 · 웹 맛집 저장</small></div></button>
+    </div>
   </section>`);
 }
 
@@ -387,9 +401,133 @@ function renderChecklist(){ const g=APP.state.checkTab; const items=checklistGro
   <div class="checklist">${items.map(([id,label,note])=>{const c=isChecked(g,id);return `<div class="check-item ${c?'done':''}"><input type="checkbox" data-check="${id}" ${c?'checked':''}><label>${label}<small>${note}</small></label></div>`}).join('')}</div>
   </section>`); }
 
+
+
+const USER_PLACE_KEY = 'sapporo-user-places-v5';
+function getUserPlaces(){ try{return JSON.parse(localStorage.getItem(USER_PLACE_KEY)||'[]')}catch{return []} }
+function saveUserPlaces(items){ localStorage.setItem(USER_PLACE_KEY,JSON.stringify(items)); }
+function userPlaceMap(p){ return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([p.name,p.area].filter(Boolean).join(' '))}`; }
+function sourceLabel(url='', type=''){ if(type) return type; if(!url) return '직접 입력'; if(/instagram\.com/i.test(url)) return 'Instagram'; if(/maps\.app\.goo\.gl|google\..*maps/i.test(url)) return 'Google Maps'; return '웹'; }
+function normalizeCloudPlace(r){ return {id:r.id,cloudId:r.id,synced:true,name:r.name||'',category:r.category||'맛집',area:r.area||'',sourceUrl:r.source_url||'',sourceType:r.source_type||'',note:r.note||'',dayCandidate:r.day_candidate?`DAY ${r.day_candidate}`:'미정',favorite:r.favorite!==false,image:r.image_url||'',imagePath:r.image_path||'',createdAt:r.created_at||new Date().toISOString()}; }
+function cloudConfigured(){ return Boolean(window.SapporoCloud?.configured?.()); }
+function cloudSignedIn(){ return Boolean(APP.cloudSession?.user); }
+async function initCloud(){
+  if(!cloudConfigured()) return;
+  try{
+    APP.cloudSession=await window.SapporoCloud.getSession();
+    window.SapporoCloud.onAuthChange(async session=>{ APP.cloudSession=session; if(session) await syncCloudPlaces(false); if(APP.state.view==='myplaces') render(); });
+    if(APP.cloudSession) await syncCloudPlaces(false);
+  }catch(e){ console.warn('cloud init',e); }
+}
+async function syncCloudPlaces(show=true){
+  if(!cloudConfigured() || !cloudSignedIn()) return;
+  try{
+    const cloud=(await window.SapporoCloud.listPlaces()).map(normalizeCloudPlace);
+    const local=getUserPlaces().filter(x=>!x.synced);
+    const byId=new Map([...cloud,...local].map(x=>[String(x.id),x]));
+    saveUserPlaces([...byId.values()].sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))));
+    if(show) toast('클라우드와 동기화했어요');
+  }catch(e){ console.warn(e); if(show) toast('동기화에 실패했어요'); }
+}
+function dataUrlToBlob(dataUrl){ const [h,b64]=dataUrl.split(','); const mime=(h.match(/data:(.*?);/)||[])[1]||'image/jpeg'; const bin=atob(b64); const a=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i); return new Blob([a],{type:mime}); }
+async function compressImage(file,max=1200,quality=.72){
+  if(!file) return {blob:null,dataUrl:''};
+  const data=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});
+  const img=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=reject;i.src=data});
+  let w=img.width,h=img.height; const scale=Math.min(1,max/Math.max(w,h)); w=Math.round(w*scale);h=Math.round(h*scale);
+  const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+  const blob=await new Promise(res=>c.toBlob(res,'image/jpeg',quality));
+  const dataUrl=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(blob)});
+  return {blob,dataUrl};
+}
+function userPlaceCard(p){
+  const img=p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}">`:`<div class="saved-place-placeholder">${({맛집:'🍴',카페:'☕',관광:'📷',쇼핑:'🛍'}[p.category]||'📍')}</div>`;
+  return `<article class="saved-place-card">${img}<div class="saved-place-body"><div class="saved-place-top"><span>${esc(p.category)}</span><small>${esc(p.dayCandidate||'미정')}</small></div><h3>${esc(p.name)}</h3><p>${esc(p.area||'지역 미입력')}</p>${p.note?`<div class="saved-place-note">${esc(p.note)}</div>`:''}<div class="saved-place-actions">${p.sourceUrl?`<button data-open-url="${esc(p.sourceUrl)}">원본</button>`:''}<button data-map="${esc(userPlaceMap(p))}">Google 지도</button><button data-user-place-delete="${esc(p.id)}">삭제</button></div></div></article>`;
+}
+function renderMyPlaces(){
+  const all=getUserPlaces(); const filter=APP.state.myPlaceFilter||'전체'; const cats=['전체','맛집','카페','관광','쇼핑']; const list=filter==='전체'?all:all.filter(x=>x.category===filter);
+  let cloud='';
+  if(!cloudConfigured()) cloud=`<div class="cloud-card warning"><strong>☁ 클라우드 연결 전</strong><p>지금 저장해도 이 기기에는 남습니다. PC·휴대폰 동기화를 켜려면 Supabase 1회 설정이 필요해요.</p></div>`;
+  else if(!cloudSignedIn()) cloud=`<div class="cloud-card"><strong>☁ 클라우드 로그인</strong><p>같은 이메일로 로그인하면 PC와 휴대폰에서 같은 장소를 볼 수 있어요.</p><div class="cloud-login"><input id="cloudEmail" type="email" placeholder="이메일 주소"><button class="primary-btn" id="cloudLogin">로그인 링크 받기</button></div></div>`;
+  else cloud=`<div class="cloud-card ok"><strong>✓ 클라우드 동기화 중</strong><p>${esc(APP.cloudSession.user.email||'로그인됨')}</p><div class="saved-place-actions"><button id="cloudSync">지금 동기화</button><button id="cloudSignout">로그아웃</button></div></div>`;
+  return shell(`<section class="page">${topbar('내 장소','인스타·웹에서 찾은 맛집과 카페를 저장해요',true)}
+    ${cloud}
+    <div class="saved-place-form"><h3>+ 새 장소 추가</h3><div class="saved-place-form-grid"><input id="userPlaceName" placeholder="장소명 *"><select id="userPlaceCategory"><option>맛집</option><option>카페</option><option>관광</option><option>쇼핑</option></select><input id="userPlaceArea" placeholder="지역 예: 삿포로 오도리"><select id="userPlaceDay"><option>미정</option><option>DAY 1</option><option>DAY 2</option><option>DAY 3</option><option>DAY 4</option></select><input id="userPlaceUrl" type="url" placeholder="인스타 / 블로그 / Google Maps 링크"><textarea id="userPlaceNote" placeholder="메모 · 추천 메뉴 · 꼭 먹고 싶은 것"></textarea><label class="upload-box"><span>📷 스크린샷 첨부</span><small>인스타 캡처나 메뉴 사진을 넣어두세요</small><input id="userPlaceImage" type="file" accept="image/*"></label><label class="favorite-check"><input id="userPlaceFavorite" type="checkbox" checked> ♥ 즐겨찾기로 저장</label></div><button class="primary-btn full" id="saveUserPlace">장소 저장</button></div>
+    <div class="memo-tabs">${cats.map(x=>`<button class="memo-tab ${x===filter?'active':''}" data-userplace-filter="${x}">${x}</button>`).join('')}</div>
+    <div class="section-label"><h2>저장한 장소</h2><span class="status-pill">${list.length}곳</span></div>
+    <div class="saved-place-list">${list.length?list.map(userPlaceCard).join(''):`<div class="empty-state"><div class="empty-ico">📌</div><strong>아직 저장한 장소가 없어요</strong><p>인스타 링크, 인터넷 주소, 스크린샷을 함께 저장해 두면 현장에서 바로 찾을 수 있어요.</p></div>`}</div>
+  </section>`);
+}
+async function saveUserPlaceFromForm(){
+  const name=q('#userPlaceName')?.value.trim(); if(!name){toast('장소명을 입력해 주세요');return;}
+  const file=q('#userPlaceImage')?.files?.[0]||null; let packed={blob:null,dataUrl:''};
+  try{ if(file) packed=await compressImage(file); }catch(e){console.warn(e);toast('이미지 처리에 실패했어요');return;}
+  const item={id:`local-${Date.now()}`,synced:false,name,category:q('#userPlaceCategory').value,area:q('#userPlaceArea').value.trim(),dayCandidate:q('#userPlaceDay').value,sourceUrl:q('#userPlaceUrl').value.trim(),sourceType:sourceLabel(q('#userPlaceUrl').value.trim()),note:q('#userPlaceNote').value.trim(),favorite:q('#userPlaceFavorite').checked,image:packed.dataUrl,imagePath:'',createdAt:new Date().toISOString()};
+  const local=getUserPlaces(); local.unshift(item); saveUserPlaces(local); toast('장소를 저장했어요'); render();
+  if(cloudConfigured() && cloudSignedIn()){
+    try{ const saved=await window.SapporoCloud.savePlace(item,packed.blob,file?.name||'screenshot.jpg'); const now=getUserPlaces().filter(x=>x.id!==item.id); now.unshift(normalizeCloudPlace(saved)); saveUserPlaces(now); toast('클라우드에도 저장했어요'); render(); }
+    catch(e){ console.warn(e); toast('기기에는 저장됐지만 클라우드 저장은 실패했어요'); }
+  }
+}
+async function pushUnsyncedPlaces(){
+  if(!cloudConfigured()||!cloudSignedIn()){toast('먼저 클라우드에 로그인해 주세요');return;}
+  const items=getUserPlaces(); let count=0;
+  for(const x of items.filter(x=>!x.synced)){
+    try{ const blob=x.image?.startsWith('data:')?dataUrlToBlob(x.image):null; await window.SapporoCloud.savePlace(x,blob,`${Date.now()}.jpg`); count++; }catch(e){console.warn(e)}
+  }
+  await syncCloudPlaces(false); toast(count?`${count}곳을 클라우드에 올렸어요`:'동기화할 새 장소가 없어요'); if(APP.state.view==='myplaces')render();
+}
+
+const MAP_HOTELS = [
+  {name:'숙소 · 소테츠 프레사 인 삿포로 스스키노',day:'숙소',map:'https://www.google.com/maps/search/?api=1&query=Sotetsu+Fresa+Inn+Sapporo+Susukino'},
+  {name:'신치토세공항',day:'공항',map:'https://www.google.com/maps/search/?api=1&query=New+Chitose+Airport'}
+];
+function renderMaps(){
+  const groups=days.map(d=>({day:d.day,title:d.title,items:places.filter(p=>p.day===d.day)}));
+  return shell(`<section class="page">${topbar('Google 지도','여행 중 자주 찾는 장소를 바로 열어요',true)}
+    <div class="map-shortcuts">${MAP_HOTELS.map(x=>`<button class="map-shortcut main" data-map="${esc(x.map)}"><span>📍</span><div><strong>${x.name}</strong><small>${x.day}</small></div><b>›</b></button>`).join('')}</div>
+    ${groups.map(g=>`<div class="map-day-block"><div class="section-label"><h2>DAY ${g.day} · ${g.title}</h2><span class="status-pill">${g.items.length}곳</span></div><div class="map-shortcuts">${g.items.map(p=>`<button class="map-shortcut" data-map="${esc(p.map)}"><span>${iconForType(p.type)}</span><div><strong>${p.name}</strong><small>${p.type} · ${p.location}</small></div><b>›</b></button>`).join('')}</div></div>`).join('')}
+    <div class="info-box"><h3>교통 경로도 바로 열기</h3><div class="map-shortcuts">${Object.entries(routes).map(([id,r])=>`<button class="map-shortcut" data-map="${esc(r.map)}"><span>🚆</span><div><strong>${r.title}</strong><small>${r.time}</small></div><b>›</b></button>`).join('')}</div></div>
+  </section>`);
+}
+function renderFavorites(){
+  const list=places.filter(p=>isFav(p.id)); const mine=getUserPlaces().filter(p=>p.favorite); const total=list.length+mine.length;
+  return shell(`<section class="page">${topbar('즐겨찾기','♥로 저장한 추천 장소와 내가 찾은 장소를 한곳에서',true)}
+    ${list.length?`<div class="section-label"><h2>앱 추천 장소</h2><span class="status-pill">${list.length}곳</span></div><div class="place-grid">${list.map(placeCard).join('')}</div>`:''}
+    ${mine.length?`<div class="section-label" style="margin-top:18px"><h2>내가 저장한 장소</h2><span class="status-pill">${mine.length}곳</span></div><div class="saved-place-list">${mine.map(userPlaceCard).join('')}</div>`:''}
+    ${!total?`<div class="empty-state"><div class="empty-ico">♥</div><strong>아직 저장한 장소가 없어요</strong><p>추천 장소의 ♥를 누르거나 ‘내 장소’에서 인스타 맛집을 저장해 보세요.</p><button class="primary-btn" data-nav="myplaces">내 장소 추가하기</button></div>`:''}
+  </section>`);
+}
+function memoKey(tab){ return `sapporo-memo-${tab}`; }
+function getMemo(tab){ return localStorage.getItem(memoKey(tab)) || ''; }
+function renderMemo(){
+  const tabs=['전체','DAY 1','DAY 2','DAY 3','DAY 4']; const t=APP.state.memoTab || '전체';
+  return shell(`<section class="page">${topbar('여행 메모','입력하는 즉시 이 휴대폰에 자동 저장돼요',true)}
+    <div class="memo-tabs">${tabs.map(x=>`<button class="memo-tab ${x===t?'active':''}" data-memotab="${x}">${x}</button>`).join('')}</div>
+    <div class="memo-card"><div class="memo-head"><div><strong>${t} 메모</strong><small>식당 주문, 살 것, 아이들 요청, 기억할 내용 등을 적어두세요.</small></div><span id="memoStatus">자동 저장</span></div><textarea id="memoText" class="memo-text" placeholder="여기에 메모하세요...">${esc(getMemo(t))}</textarea></div>
+    <div class="memo-tip">💡 장소 이름이나 일본어 문장을 적어 두면 현장에서 바로 보여주기 편해요.</div>
+  </section>`);
+}
+function expenseKey(){ return 'sapporo-expenses-v1'; }
+function getExpenses(){ try{return JSON.parse(localStorage.getItem(expenseKey())||'[]')}catch{return []} }
+function saveExpenses(items){ localStorage.setItem(expenseKey(),JSON.stringify(items)); }
+function getBudget(){ return Number(localStorage.getItem('sapporo-budget-yen')||0); }
+function yen(n){ return `¥${Math.round(Number(n)||0).toLocaleString('ja-JP')}`; }
+function renderExpenses(){
+  const items=getExpenses(); const budget=getBudget(); const spent=items.reduce((s,x)=>s+Number(x.amount||0),0); const remain=budget-spent; const pct=budget>0?Math.min(100,Math.round(spent/budget*100)):0;
+  const cats=['식사','카페','교통','쇼핑','관광','기타'];
+  return shell(`<section class="page">${topbar('여행 경비','예산을 입력하면 사용액과 남은 잔액을 자동 계산해요',true)}
+    <div class="budget-summary"><div><small>총 예산</small><strong>${yen(budget)}</strong></div><div><small>사용 금액</small><strong>${yen(spent)}</strong></div><div class="${remain<0?'negative':''}"><small>남은 잔액</small><strong>${yen(remain)}</strong></div></div>
+    <div class="budget-progress"><div style="width:${pct}%"></div></div>
+    <div class="finance-card"><h3>총 여행 예산 설정</h3><div class="input-row"><div class="money-input"><span>¥</span><input id="budgetInput" type="number" min="0" inputmode="numeric" value="${budget||''}" placeholder="예: 200000"></div><button class="primary-btn" id="saveBudget">예산 저장</button></div><p class="form-help">모든 경비는 엔화(¥) 기준으로 기록합니다.</p></div>
+    <div class="finance-card"><h3>사용 금액 추가</h3><div class="expense-form"><select id="expenseDay"><option>DAY 1</option><option>DAY 2</option><option>DAY 3</option><option>DAY 4</option><option>기타</option></select><select id="expenseCat">${cats.map(c=>`<option>${c}</option>`).join('')}</select><input id="expenseMemo" type="text" maxlength="40" placeholder="사용처/메모 예: 나루토 점심"><div class="money-input"><span>¥</span><input id="expenseAmount" type="number" min="1" inputmode="numeric" placeholder="금액"></div><button class="primary-btn" id="addExpense">+ 경비 추가</button></div></div>
+    <div class="section-label"><h2>사용 내역</h2><span class="status-pill">${items.length}건</span></div>
+    <div class="expense-list">${items.length?items.slice().reverse().map(x=>`<div class="expense-item"><div class="expense-cat">${x.category}</div><div class="expense-main"><strong>${esc(x.memo||x.category)}</strong><small>${x.day} · ${x.category}</small></div><div class="expense-amt">${yen(x.amount)}</div><button class="expense-del" data-expense-delete="${x.id}" aria-label="삭제">×</button></div>`).join(''):`<div class="empty-state compact"><div class="empty-ico">¥</div><strong>아직 기록된 경비가 없어요</strong><p>사용할 때마다 금액을 추가하면 남은 예산이 바로 계산됩니다.</p></div>`}</div>
+  </section>`);
+}
 function renderMore(){ return shell(`<section class="page">${topbar('더보기','여행 중 자주 쓰는 기능')}
-  <div class="quick-grid"><button class="quick-tile" data-nav="japanese"><div class="quick-icon">あ</div><div class="quick-title">여행 일본어</div><div class="quick-caption">음성 재생</div></button><button class="quick-tile" data-place-mode="food"><div class="quick-icon">♡</div><div class="quick-title">맛집·카페</div><div class="quick-caption">식당·디저트</div></button><button class="quick-tile" data-place-mode="tourism"><div class="quick-icon">📷</div><div class="quick-title">관광지</div><div class="quick-caption">명소 추천</div></button><button class="quick-tile" data-nav="info"><div class="quick-icon">ℹ</div><div class="quick-title">여행 정보</div><div class="quick-caption">전압·통화·긴급</div></button><button class="quick-tile" data-nav="routes"><div class="quick-icon">⌖</div><div class="quick-title">길찾기</div><div class="quick-caption">역·출구 상세</div></button><button class="quick-tile" data-nav="checklist"><div class="quick-icon">✓</div><div class="quick-title">체크리스트</div><div class="quick-caption">준비물 저장</div></button></div>
-  <div class="notice-card"><div class="notice-icon">📶</div><div><div class="notice-title">PWA 오프라인 캐시 적용</div><div class="notice-copy">한 번 접속한 뒤에는 핵심 화면과 이미지가 캐시됩니다. 지도 열기는 인터넷 연결이 필요합니다.</div></div></div>
+  <div class="quick-grid"><button class="quick-tile" data-nav="maps"><div class="quick-icon">🗺️</div><div class="quick-title">Google 지도</div><div class="quick-caption">장소 바로 열기</div></button><button class="quick-tile" data-nav="favorites"><div class="quick-icon">♥</div><div class="quick-title">즐겨찾기</div><div class="quick-caption">저장 장소</div></button><button class="quick-tile" data-nav="memo"><div class="quick-icon">✎</div><div class="quick-title">여행 메모</div><div class="quick-caption">날짜별 저장</div></button><button class="quick-tile" data-nav="expenses"><div class="quick-icon">¥</div><div class="quick-title">여행 경비</div><div class="quick-caption">예산·잔액</div></button><button class="quick-tile" data-nav="myplaces"><div class="quick-icon">＋</div><div class="quick-title">내 장소</div><div class="quick-caption">인스타·웹 저장</div></button><button class="quick-tile" data-nav="japanese"><div class="quick-icon">あ</div><div class="quick-title">여행 일본어</div><div class="quick-caption">음성 재생</div></button><button class="quick-tile" data-place-mode="food"><div class="quick-icon">🍴</div><div class="quick-title">맛집·카페</div><div class="quick-caption">식당·디저트</div></button><button class="quick-tile" data-place-mode="tourism"><div class="quick-icon">📷</div><div class="quick-title">관광지</div><div class="quick-caption">명소 추천</div></button><button class="quick-tile" data-nav="info"><div class="quick-icon">ℹ</div><div class="quick-title">여행 정보</div><div class="quick-caption">전압·통화·긴급</div></button></div>
+  <div class="notice-card"><div class="notice-icon">📶</div><div><div class="notice-title">PWA 오프라인 캐시 적용</div><div class="notice-copy">일정·메모·경비는 이 휴대폰에 저장됩니다. ‘내 장소’는 Supabase 연결 후 PC·휴대폰 동기화가 가능합니다.</div></div></div>
   </section>`); }
 function renderInfo(){ return shell(`<section class="page">${topbar('여행 정보','10월 하순 삿포로 자유여행 메모',true)}
   <div class="info-hero"><h2>가을 삿포로 준비</h2><p>아침·저녁은 쌀쌀할 수 있어 겉옷과 얇은 이너를 겹쳐 입는 방식이 편합니다. 실제 기온은 출발 직전 다시 확인하세요.</p></div>
@@ -417,6 +555,11 @@ function render(){
     case 'checklist': html=renderChecklist(); break;
     case 'more': html=renderMore(); break;
     case 'info': html=renderInfo(); break;
+    case 'maps': html=renderMaps(); break;
+    case 'favorites': html=renderFavorites(); break;
+    case 'memo': html=renderMemo(); break;
+    case 'expenses': html=renderExpenses(); break;
+    case 'myplaces': html=renderMyPlaces(); break;
     default: html=renderHome();
   }
   q('#app').innerHTML=html; bind();
@@ -431,6 +574,7 @@ function bind(){
   qa('[data-filter]').forEach(b=>b.onclick=()=>replaceViewState({placeFilter:b.dataset.filter}));
   qa('[data-jptab]').forEach(b=>b.onclick=()=>replaceViewState({jpTab:b.dataset.jptab}));
   qa('[data-checktab]').forEach(b=>b.onclick=()=>replaceViewState({checkTab:b.dataset.checktab}));
+  qa('[data-memotab]').forEach(b=>b.onclick=()=>replaceViewState({memoTab:b.dataset.memotab}));
   qa('[data-check]').forEach(b=>b.onchange=()=>{localStorage.setItem(checkKey(APP.state.checkTab,b.dataset.check),b.checked?'1':'0');render()});
   qa('[data-map]').forEach(b=>b.onclick=()=>mapOpen(b.dataset.map));
   qa('[data-speak]').forEach(b=>b.onclick=()=>speakJapanese(b.dataset.speak));
@@ -438,6 +582,17 @@ function bind(){
   qa('[data-copy-route]').forEach(b=>b.onclick=()=>copyText(b.dataset.copyRoute));
   qa('[data-fav]').forEach(b=>b.onclick=()=>{toggleFav(b.dataset.fav);render()});
   qa('[data-back]').forEach(b=>b.onclick=()=>historyBack());
+  const memo=q('#memoText'); if(memo) memo.oninput=()=>{localStorage.setItem(memoKey(APP.state.memoTab),memo.value);const s=q('#memoStatus');if(s){s.textContent='저장됨 ✓';clearTimeout(bind._memoT);bind._memoT=setTimeout(()=>s.textContent='자동 저장',1200);}};
+  const saveBudget=q('#saveBudget'); if(saveBudget) saveBudget.onclick=()=>{const v=Math.max(0,Number(q('#budgetInput').value||0));localStorage.setItem('sapporo-budget-yen',String(v));toast('여행 예산을 저장했어요');render();};
+  const addExpense=q('#addExpense'); if(addExpense) addExpense.onclick=()=>{const amount=Math.max(0,Number(q('#expenseAmount').value||0));if(!amount){toast('사용 금액을 입력해 주세요');return;}const items=getExpenses();items.push({id:Date.now(),day:q('#expenseDay').value,category:q('#expenseCat').value,memo:q('#expenseMemo').value.trim(),amount});saveExpenses(items);toast('경비를 추가했어요');render();};
+  qa('[data-expense-delete]').forEach(b=>b.onclick=()=>{saveExpenses(getExpenses().filter(x=>String(x.id)!==String(b.dataset.expenseDelete)));toast('경비를 삭제했어요');render();});
+  qa('[data-userplace-filter]').forEach(b=>b.onclick=()=>replaceViewState({myPlaceFilter:b.dataset.userplaceFilter}));
+  qa('[data-open-url]').forEach(b=>b.onclick=()=>window.open(b.dataset.openUrl,'_blank','noopener'));
+  qa('[data-user-place-delete]').forEach(b=>b.onclick=async()=>{const id=b.dataset.userPlaceDelete;const item=getUserPlaces().find(x=>String(x.id)===String(id));if(item?.cloudId&&cloudConfigured()&&cloudSignedIn()){try{await window.SapporoCloud.deletePlace(item.cloudId,item.imagePath||'')}catch(e){console.warn(e)}}saveUserPlaces(getUserPlaces().filter(x=>String(x.id)!==String(id)));toast('장소를 삭제했어요');render();});
+  const saveUP=q('#saveUserPlace'); if(saveUP) saveUP.onclick=saveUserPlaceFromForm;
+  const cloudLogin=q('#cloudLogin'); if(cloudLogin) cloudLogin.onclick=async()=>{const email=q('#cloudEmail').value.trim();if(!email){toast('이메일을 입력해 주세요');return;}try{await window.SapporoCloud.sendMagicLink(email);toast('이메일로 로그인 링크를 보냈어요');}catch(e){console.warn(e);toast('로그인 링크 전송에 실패했어요');}};
+  const cloudSync=q('#cloudSync'); if(cloudSync) cloudSync.onclick=pushUnsyncedPlaces;
+  const cloudSignout=q('#cloudSignout'); if(cloudSignout) cloudSignout.onclick=async()=>{await window.SapporoCloud.signOut();APP.cloudSession=null;toast('클라우드에서 로그아웃했어요');render();};
   const ib=q('#installBtn'); if(ib) ib.onclick=installApp;
 }
 function historyBack(){
@@ -450,6 +605,7 @@ function historyBack(){
   else if(APP.state.view==='place') go('places',{}, {replace:true});
   else if(APP.state.view==='day') go('schedule',{}, {replace:true});
   else if(APP.state.view==='info') go('home',{}, {replace:true});
+  else if(['maps','favorites','memo','expenses','myplaces'].includes(APP.state.view)) go('more',{}, {replace:true});
   else go('home',{}, {replace:true});
 }
 function speakJapanese(text){
@@ -472,6 +628,7 @@ window.addEventListener('popstate',e=>{
   render();
   window.scrollTo({top:0,behavior:'auto'});
 });
-if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js?v=3').catch(()=>{});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js?v=5').catch(()=>{});
 initNavigation();
 render();
+initCloud();

@@ -194,7 +194,66 @@ function qa(sel){ return [...document.querySelectorAll(sel)]; }
 function esc(s=''){ return String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
 function toast(msg){ const el=q('#toast'); if(!el) return; el.textContent=msg; el.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('show'),1600); }
 function mapOpen(url){ window.open(url,'_blank','noopener'); }
-function go(view, extra={}){ APP.state.view=view; Object.assign(APP.state,extra); location.hash=view; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+// PWA/브라우저 뒤로가기를 실제 화면 이동 기록과 연결합니다.
+// Android의 시스템 뒤로가기, 브라우저 뒤로가기, 앱 내부 ‹ 버튼이 같은 기록을 사용합니다.
+let NAV_SEQ = 0;
+
+function stateUrl(state=APP.state){
+  switch(state.view){
+    case 'day': return `#day/${state.day || 1}`;
+    case 'route': return `#route/${encodeURIComponent(state.route || '')}`;
+    case 'place': return `#place/${encodeURIComponent(state.place || '')}`;
+    default: return `#${state.view || 'home'}`;
+  }
+}
+
+function stateFromUrl(){
+  const raw = location.hash.replace(/^#/, '');
+  const [viewRaw, valueRaw] = raw.split('/');
+  const view = viewRaw || 'home';
+  const topViews = ['home','schedule','routes','places','japanese','checklist','more','info'];
+  if(topViews.includes(view)) return {view};
+  if(view === 'day') return {view:'day', day:Math.min(4, Math.max(1, Number(valueRaw) || 1)), dayTab:'schedule'};
+  if(view === 'route' && valueRaw) return {view:'route', route:decodeURIComponent(valueRaw)};
+  if(view === 'place' && valueRaw) return {view:'place', place:decodeURIComponent(valueRaw)};
+  return {view:'home'};
+}
+
+function historyPayload(){
+  return {__sapporoTrip:true, seq:NAV_SEQ, state:{...APP.state}};
+}
+
+function initNavigation(){
+  if(history.state?.__sapporoTrip && history.state.state){
+    APP.state = {...APP.state, ...history.state.state};
+    NAV_SEQ = Number(history.state.seq) || 0;
+    return;
+  }
+  APP.state = {...APP.state, ...stateFromUrl()};
+  NAV_SEQ = 0;
+  history.replaceState(historyPayload(), '', stateUrl(APP.state));
+}
+
+function go(view, extra={}, options={}){
+  const replace = Boolean(options.replace);
+  APP.state = {...APP.state, view, ...extra};
+  if(replace){
+    history.replaceState(historyPayload(), '', stateUrl(APP.state));
+  } else {
+    NAV_SEQ += 1;
+    history.pushState(historyPayload(), '', stateUrl(APP.state));
+  }
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function replaceViewState(patch={}){
+  APP.state = {...APP.state, ...patch};
+  history.replaceState(historyPayload(), '', stateUrl(APP.state));
+  render();
+}
+
 function getDay(n){ return days.find(d=>d.day===Number(n)) || days[0]; }
 function tripStatus(){
   const now=new Date(); const start=APP.tripStart, end=APP.tripEnd;
@@ -336,13 +395,13 @@ function render(){
 }
 function bind(){
   qa('[data-nav]').forEach(b=>b.onclick=()=>go(b.dataset.nav));
-  qa('[data-day]').forEach(b=>b.onclick=()=>{APP.state.day=Number(b.dataset.day);APP.state.dayTab='schedule';go('day')});
-  qa('[data-daytab]').forEach(b=>b.onclick=()=>{APP.state.dayTab=b.dataset.daytab;render()});
-  qa('[data-route]').forEach(b=>b.onclick=()=>{APP.state.route=b.dataset.route;go('route')});
-  qa('[data-place]').forEach(b=>b.onclick=()=>{APP.state.place=b.dataset.place;go('place')});
-  qa('[data-filter]').forEach(b=>b.onclick=()=>{APP.state.placeFilter=b.dataset.filter;render()});
-  qa('[data-jptab]').forEach(b=>b.onclick=()=>{APP.state.jpTab=b.dataset.jptab;render()});
-  qa('[data-checktab]').forEach(b=>b.onclick=()=>{APP.state.checkTab=b.dataset.checktab;render()});
+  qa('[data-day]').forEach(b=>b.onclick=()=>go('day',{day:Number(b.dataset.day),dayTab:'schedule'}));
+  qa('[data-daytab]').forEach(b=>b.onclick=()=>replaceViewState({dayTab:b.dataset.daytab}));
+  qa('[data-route]').forEach(b=>b.onclick=()=>go('route',{route:b.dataset.route}));
+  qa('[data-place]').forEach(b=>b.onclick=()=>go('place',{place:b.dataset.place}));
+  qa('[data-filter]').forEach(b=>b.onclick=()=>replaceViewState({placeFilter:b.dataset.filter}));
+  qa('[data-jptab]').forEach(b=>b.onclick=()=>replaceViewState({jpTab:b.dataset.jptab}));
+  qa('[data-checktab]').forEach(b=>b.onclick=()=>replaceViewState({checkTab:b.dataset.checktab}));
   qa('[data-check]').forEach(b=>b.onchange=()=>{localStorage.setItem(checkKey(APP.state.checkTab,b.dataset.check),b.checked?'1':'0');render()});
   qa('[data-map]').forEach(b=>b.onclick=()=>mapOpen(b.dataset.map));
   qa('[data-speak]').forEach(b=>b.onclick=()=>speakJapanese(b.dataset.speak));
@@ -353,7 +412,16 @@ function bind(){
   const ib=q('#installBtn'); if(ib) ib.onclick=installApp;
 }
 function historyBack(){
-  if(APP.state.view==='route') go('routes'); else if(APP.state.view==='place') go('places'); else if(APP.state.view==='day') go('schedule'); else go('home');
+  if(history.state?.__sapporoTrip && Number(history.state.seq) > 0){
+    history.back();
+    return;
+  }
+  // 앱을 상세 화면 주소로 바로 연 경우에는 합리적인 상위 화면으로 돌아갑니다.
+  if(APP.state.view==='route') go('routes',{}, {replace:true});
+  else if(APP.state.view==='place') go('places',{}, {replace:true});
+  else if(APP.state.view==='day') go('schedule',{}, {replace:true});
+  else if(APP.state.view==='info') go('home',{}, {replace:true});
+  else go('home',{}, {replace:true});
 }
 function speakJapanese(text){
   if(!('speechSynthesis' in window)){toast('이 브라우저는 음성 재생을 지원하지 않아요');return;}
@@ -364,6 +432,17 @@ function favKey(id){return `sapporo-fav-${id}`;} function isFav(id){return local
 async function installApp(){ if(APP.installPrompt){APP.installPrompt.prompt(); await APP.installPrompt.userChoice; APP.installPrompt=null; toast('설치 안내를 확인해 주세요');} else toast('브라우저 메뉴의 홈 화면에 추가를 사용해 주세요'); }
 
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();APP.installPrompt=e;});
-window.addEventListener('hashchange',()=>{ const h=location.hash.replace('#',''); if(['home','schedule','routes','places','japanese','checklist','more','info'].includes(h)){APP.state.view=h;render();}});
-if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+window.addEventListener('popstate',e=>{
+  if(e.state?.__sapporoTrip && e.state.state){
+    APP.state = {...APP.state, ...e.state.state};
+    NAV_SEQ = Number(e.state.seq) || 0;
+  } else {
+    APP.state = {...APP.state, ...stateFromUrl()};
+    NAV_SEQ = 0;
+  }
+  render();
+  window.scrollTo({top:0,behavior:'auto'});
+});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js?v=2').catch(()=>{});
+initNavigation();
 render();

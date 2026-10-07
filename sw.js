@@ -1,6 +1,6 @@
-const CACHE = 'sapporo-family-trip-v3';
+const CACHE = 'sapporo-family-trip-v4';
 const CORE = [
-  './','./index.html','./styles.css?v=3','./app.js?v=3','./manifest.webmanifest',
+  './','./index.html','./styles.css?v=4','./app.js?v=4','./manifest.webmanifest',
   './assets/day1-otaru.jpg','./assets/day2-jozankei.jpg','./assets/day3-sapporo.jpg','./assets/day4-airport.jpg',
   './assets/otaru-canal.jpg','./assets/naruto-food.jpg','./assets/letao-dessert.jpg','./assets/bichon-home.jpg','./assets/bichon-route.jpg',
   './assets/icon-192.png','./assets/icon-512.png'

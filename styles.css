@@ -154,3 +154,29 @@ img{display:block;max-width:100%}
 .ai-place-status.error{background:#fff5f2;border-color:#f1d1c8}.ai-place-status.error strong{color:#a64f3d}
 .mini-ai-btn{border:1px solid #dfd1c7;background:#fff;border-radius:10px;padding:7px 8px;font-size:8px;font-weight:900;color:var(--ink)}
 @keyframes aiPulse{0%,100%{transform:scale(1);opacity:.65}50%{transform:scale(1.16);opacity:1}}
+
+
+/* v12 · home controls + cloud catalog */
+.desktop-brand-btn{width:100%;border:0;background:transparent;text-align:left;cursor:pointer;color:inherit;font:inherit;padding-left:0;padding-right:0}
+.desktop-brand-btn:hover{opacity:.86}
+.home-plan-row{display:grid;grid-template-columns:minmax(145px,.9fr) minmax(0,1.65fr);gap:8px;align-items:stretch;margin-top:10px}
+.home-plan-row .today-launch{margin-top:0;min-height:58px}
+.inline-day-strip{margin-top:0;align-self:stretch}
+.inline-day-strip .day-tab{height:100%;min-height:58px;padding:7px 2px}
+.home-secondary-grid{margin-top:4px}
+.user-catalog-placeholder{display:grid;place-items:center;background:#fff0e8;font-size:42px;color:var(--orange-deep)}
+.user-place-catalog .static-heart{display:grid;place-items:center;pointer-events:none}
+.saved-catalog-title{margin-top:16px}
+.cloud-login-actions{margin-top:12px}
+.google-login-btn{width:100%;min-height:48px;border:1px solid #ddd;background:#fff;border-radius:15px;color:#263238;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;box-shadow:var(--shadow-sm)}
+.google-login-btn span{font-size:18px;font-weight:950;color:#4285f4}
+.cloud-divider{display:flex;align-items:center;gap:8px;margin:10px 0;color:var(--muted);font-size:9px}.cloud-divider:before,.cloud-divider:after{content:"";height:1px;background:#eadfd7;flex:1}
+@media(max-width:520px){
+  .home-plan-row{grid-template-columns:minmax(128px,.85fr) minmax(0,1.45fr);gap:6px}
+  .home-plan-row .today-launch{grid-template-columns:34px 1fr 12px;padding:8px 8px;gap:6px}
+  .home-plan-row .today-launch-icon{width:34px;height:34px;border-radius:11px;font-size:17px}
+  .home-plan-row .today-launch-copy strong{font-size:10px}.home-plan-row .today-launch-copy small{display:none}.home-plan-row .today-launch-arrow{font-size:18px}
+  .inline-day-strip{gap:4px}.inline-day-strip .day-tab{font-size:7px;border-radius:11px;padding:5px 1px}.inline-day-strip .day-tab strong{font-size:8px}
+  .home-secondary-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(min-width:900px){.home-secondary-grid{grid-template-columns:repeat(5,1fr)}.home-plan-row{max-width:none}}

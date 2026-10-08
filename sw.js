@@ -1,7 +1,7 @@
-// SAPPORO FAMILY TRIP v11 · stable offline-first app shell
-const CACHE = 'sapporo-family-trip-v11';
+// SAPPORO FAMILY TRIP v12 · stable offline-first app shell
+const CACHE = 'sapporo-family-trip-v12';
 const CORE = [
-  '/', '/index.html', '/styles.css?v=11', '/app.js?v=11', '/cloud.js?v=11', '/supabase-config.js?v=11', '/manifest.webmanifest',
+  '/', '/index.html', '/styles.css?v=12', '/app.js?v=12', '/cloud.js?v=12', '/supabase-config.js?v=12', '/manifest.webmanifest',
   '/assets/day1-otaru.jpg','/assets/day2-jozankei.jpg','/assets/day3-sapporo.jpg','/assets/day4-airport.jpg',
   '/assets/otaru-canal.jpg','/assets/naruto-food.jpg','/assets/letao-dessert.jpg','/assets/bichon-home.jpg','/assets/bichon-route.jpg',
   '/assets/icon-192.png','/assets/icon-512.png'

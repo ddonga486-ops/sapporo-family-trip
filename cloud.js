@@ -1,4 +1,4 @@
-// SAPPORO FAMILY TRIP v10 · Supabase cloud adapter · explicit auth callback handling
+// SAPPORO FAMILY TRIP v12 · Supabase cloud adapter · Google OAuth + persistent sessions
 window.SapporoCloud = (() => {
   let client = null;
   let sdkPromise = null;
@@ -58,7 +58,8 @@ window.SapporoCloud = (() => {
     return data?.session || null;
   }
   async function sendMagicLink(email){ const c=await getClient(); if(!c)throw new Error('Supabase not configured'); const redirectTo=location.origin+location.pathname; const {error}=await c.auth.signInWithOtp({email,options:{emailRedirectTo:redirectTo}}); if(error)throw error; }
-  async function signOut(){ const c=await getClient(); if(!c)return; const {error}=await c.auth.signOut(); if(error)throw error; }
+  async function signInWithGoogle(){ const c=await getClient(); if(!c)throw new Error('Supabase not configured'); const redirectTo=location.origin+location.pathname; const {data,error}=await c.auth.signInWithOAuth({provider:'google',options:{redirectTo}}); if(error)throw error; return data; }
+  async function signOut(){ const c=await getClient(); if(!c)return; const {error}=await c.auth.signOut({scope:'local'}); if(error)throw error; }
   async function onAuthChange(fn){ const c=await getClient(); if(!c)return; c.auth.onAuthStateChange((_event,session)=>fn(session)); }
   async function requireUser(){ const s=await getSession(); if(!s?.user)throw new Error('로그인이 필요합니다'); return s.user; }
   async function signedImage(path){ if(!path)return ''; const c=await getClient(); const {data,error}=await c.storage.from('place-images').createSignedUrl(path,3600); if(error)return ''; return data.signedUrl||''; }
@@ -113,6 +114,6 @@ window.SapporoCloud = (() => {
   async function deletePlace(id,imagePath=''){
     const c=await getClient(); await requireUser(); if(imagePath){const {error:sErr}=await c.storage.from('place-images').remove([imagePath]); if(sErr)console.warn(sErr)} const {error}=await c.from('saved_places').delete().eq('id',id); if(error)throw error;
   }
-  return {configured,getSession,consumeAuthCallback,sendMagicLink,signOut,onAuthChange,listPlaces,savePlace,deletePlace,analyzePlaceImage};
+  return {configured,getSession,consumeAuthCallback,sendMagicLink,signInWithGoogle,signOut,onAuthChange,listPlaces,savePlace,deletePlace,analyzePlaceImage};
 })();
 window.dispatchEvent(new Event('sapporo-cloud-ready'));

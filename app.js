@@ -290,7 +290,7 @@ function shell(content){
   const active = ['day','place','japanese','info','maps','favorites','memo','expenses','myplaces'].includes(APP.state.view) ? (APP.state.view==='day'?'schedule':APP.state.view==='place'?'schedule':'more') : APP.state.view;
   return `<div class="app-shell">
     <aside class="desktop-rail">
-      <div class="desktop-brand"><img src="./assets/icon-192.png"><div><strong>SAPPORO</strong><small>FAMILY TRIP 2026</small></div></div>
+      <button class="desktop-brand desktop-brand-btn" type="button" data-nav="home" aria-label="메인 화면으로 이동"><img src="./assets/icon-192.png"><div><strong>SAPPORO</strong><small>FAMILY TRIP 2026</small></div></button>
       <div class="desktop-menu">${navItems.map(([v,i,l])=>`<button class="desktop-nav-btn ${active===v?'active':''}" data-nav="${v}"><span>${i}</span>${l}</button>`).join('')}
         <button class="desktop-nav-btn ${APP.state.view==='japanese'?'active':''}" data-nav="japanese"><span>あ</span>여행 일본어</button>
         <button class="desktop-nav-btn ${APP.state.view==='places' && APP.state.placeMode==='food'?'active':''}" data-place-mode="food"><span>♡</span>맛집·카페</button>
@@ -317,11 +317,14 @@ function renderHome(){
         <div><span class="hero-kicker">🍁 ${status.label}</span><h1>SAPPORO</h1><div class="trip-dates">2026. 10. 20 - 10. 23 · 3박 4일</div></div>
         <div class="hero-lower"><div><div class="hero-day">${status.mode==='before'?'TRIP START':'TODAY'}</div><div class="hero-place">DAY ${day.day}<br>${day.title}</div></div><img class="hero-bichon" src="./assets/bichon-home.jpg" alt="미니비숑 캐릭터"></div>
       </div></article>
-      <button class="today-launch" data-day="${day.day}">
-        <span class="today-launch-icon">🗓</span>
-        <span class="today-launch-copy"><strong>오늘 일정 보기</strong><small>DAY ${day.day} · ${day.title} 일정 바로 열기</small></span>
-        <span class="today-launch-arrow">›</span>
-      </button>
+      <div class="home-plan-row">
+        <button class="today-launch" data-day="${day.day}">
+          <span class="today-launch-icon">🗓</span>
+          <span class="today-launch-copy"><strong>오늘 일정 보기</strong><small>DAY ${day.day} · ${day.title}</small></span>
+          <span class="today-launch-arrow">›</span>
+        </button>
+        <div class="day-strip home-day-strip inline-day-strip">${days.map(d=>`<button class="day-tab ${d.day===day.day?'active':''}" data-day="${d.day}"><strong>DAY ${d.day}</strong>${d.title.replace(' ','')}</button>`).join('')}</div>
+      </div>
     </div>
     <div class="quick-grid home-quick-grid">
       <button class="quick-tile" data-nav="schedule"><div class="quick-icon">🗓</div><div class="quick-title">여행 일정</div><div class="quick-caption">4일 전체보기</div></button>
@@ -331,17 +334,15 @@ function renderHome(){
       <button class="quick-tile" data-nav="checklist"><div class="quick-icon">✅</div><div class="quick-title">체크리스트</div><div class="quick-caption">준비물 확인</div></button>
       <button class="quick-tile" data-nav="japanese"><div class="quick-icon">あ</div><div class="quick-title">여행 일본어</div><div class="quick-caption">회화·음성</div></button>
     </div>
-    <div class="day-strip home-day-strip">${days.map(d=>`<button class="day-tab ${d.day===day.day?'active':''}" data-day="${d.day}"><strong>DAY ${d.day}</strong>${d.title.replace(' ','')}</button>`).join('')}</div>
-    <div class="tool-grid home-tool-grid">
-      <button class="tool-tile" data-nav="maps"><span>🗺️</span><div><strong>Google 지도</strong><small>여행지 바로 열기</small></div></button>
-      <button class="tool-tile" data-nav="myplaces"><span>＋</span><div><strong>내 장소</strong><small>인스타 · 웹 맛집 저장</small></div></button>
-      <button class="tool-tile" data-nav="memo"><span>✎</span><div><strong>여행 메모</strong><small>날짜별 자동 저장</small></div></button>
-      <button class="tool-tile" data-nav="expenses"><span>¥</span><div><strong>여행 경비</strong><small>예산 · 사용 · 잔액</small></div></button>
-      <button class="tool-tile" data-nav="favorites"><span>♥</span><div><strong>즐겨찾기</strong><small>저장한 장소 모아보기</small></div></button>
+    <div class="quick-grid home-quick-grid home-secondary-grid">
+      <button class="quick-tile" data-nav="maps"><div class="quick-icon">🗺️</div><div class="quick-title">Google 지도</div><div class="quick-caption">여행지 바로 열기</div></button>
+      <button class="quick-tile" data-nav="myplaces"><div class="quick-icon">＋</div><div class="quick-title">내 장소</div><div class="quick-caption">인스타·웹 저장</div></button>
+      <button class="quick-tile" data-nav="memo"><div class="quick-icon">✎</div><div class="quick-title">여행 메모</div><div class="quick-caption">날짜별 저장</div></button>
+      <button class="quick-tile" data-nav="expenses"><div class="quick-icon">¥</div><div class="quick-title">여행 경비</div><div class="quick-caption">예산·잔액</div></button>
+      <button class="quick-tile" data-nav="favorites"><div class="quick-icon">♥</div><div class="quick-title">즐겨찾기</div><div class="quick-caption">저장 장소</div></button>
     </div>
   </section>`);
 }
-
 function renderSchedule(){ return shell(`<section class="page">${topbar('전체 일정','원하는 날짜를 선택하세요')}
   <div class="day-list">${days.map(d=>`<button class="day-card" data-day="${d.day}"><img src="${d.image}" alt="${d.title}"><div class="day-card-overlay"></div><div class="day-card-content"><div class="day-card-day">DAY ${d.day}</div><div class="day-card-date">${d.date}</div><div class="day-card-place">${d.title}</div></div><span class="day-card-go">›</span></button>`).join('')}</div>
   <div class="notice-card" style="margin-top:15px"><div class="notice-icon">🐶</div><div><div class="notice-title">여행 중에는 하루씩만 보면 돼요</div><div class="notice-copy">DAY 화면은 시간 순서대로 만들었고, 이동이 필요한 일정은 바로 길찾기 상세로 연결됩니다.</div></div></div>
@@ -379,15 +380,29 @@ function renderRouteDetail(){ const r=routes[APP.state.route]; if(!r)return rend
   </section>`); }
 
 function placeCard(p){ return `<article class="place-card"><img class="photo" src="${p.image}" alt="${p.name}"><div class="place-card-body"><div class="place-head"><div><div class="place-day-badge">DAY ${p.day} · ${p.type}</div><div class="place-name">${p.name}</div><div class="place-jp">${p.jp} · ${p.pron}</div></div><button class="heart-btn ${isFav(p.id)?'on':''}" data-fav="${p.id}">♥</button></div><div class="place-rating">★ ${p.rating}</div><div class="place-desc">${p.desc}</div>${p.recommend?`<div class="place-recommend"><strong>추천 포인트</strong><span>${p.recommend}</span></div>`:''}<div class="place-facts"><div class="fact"><small>운영/시간</small><strong>${p.hours}</strong></div><div class="fact"><small>예상/입장</small><strong>${p.budget}</strong></div></div><div class="card-actions"><button class="primary" data-place="${p.id}">상세 보기</button><button data-map="${esc(p.map)}">지도에서 보기</button></div></div></article>`; }
+function userPlaceCatalogCard(p){
+  const icon=({맛집:'🍴',카페:'☕',관광:'📷',쇼핑:'🛍'}[p.category]||'📍');
+  const media=p.image?`<img class="photo" src="${esc(p.image)}" alt="${esc(p.name)}">`:`<div class="photo user-catalog-placeholder">${icon}</div>`;
+  return `<article class="place-card user-place-catalog">${media}<div class="place-card-body"><div class="place-head"><div><div class="place-day-badge">내 저장 · ${esc(p.category)}${p.dayCandidate&&p.dayCandidate!=='미정'?` · ${esc(p.dayCandidate)}`:''}</div><div class="place-name">${esc(p.name)}</div><div class="place-jp">${esc(p.area||'지역 미입력')}</div></div>${p.favorite?'<span class="heart-btn on static-heart">♥</span>':''}</div>${p.note?`<div class="place-desc">${esc(p.note)}</div>`:''}<div class="card-actions">${p.sourceUrl?`<button data-open-url="${esc(p.sourceUrl)}">원본 보기</button>`:''}<button data-map="${esc(userPlaceMap(p))}">지도에서 보기</button></div></div></article>`;
+}
 function renderPlaces(){
   const mode=APP.state.placeMode || 'food';
   const f=APP.state.placeFilter || '전체';
-  const base=mode==='tourism' ? places.filter(p=>p.type==='관광') : places.filter(p=>['식당','카페'].includes(p.type));
-  const list=(mode==='food' && f!=='전체') ? base.filter(p=>p.type===f) : base;
+  let base=mode==='tourism' ? places.filter(p=>p.type==='관광') : places.filter(p=>['식당','카페'].includes(p.type));
+  if(mode==='food' && f==='맛집') base=base.filter(p=>p.type==='식당');
+  else if(mode==='food' && f==='카페') base=base.filter(p=>p.type==='카페');
+
+  let mine=mode==='tourism' ? getUserPlaces().filter(p=>p.category==='관광') : getUserPlaces().filter(p=>['맛집','카페'].includes(p.category));
+  if(mode==='food' && f==='맛집') mine=mine.filter(p=>p.category==='맛집');
+  else if(mode==='food' && f==='카페') mine=mine.filter(p=>p.category==='카페');
+
   const title=mode==='tourism' ? '관광지' : '맛집 · 카페';
-  const subtitle=mode==='tourism' ? '4일 동선에 맞춰 추천하는 명소' : '점심 · 저녁 · 카페를 일정별로 추천';
-  const filters=mode==='food' ? `<div class="filter-row">${['전체','식당','카페'].map(x=>`<button class="filter-chip ${f===x?'active':''}" data-filter="${x}">${x}</button>`).join('')}</div>` : '';
-  return shell(`<section class="page">${topbar(title,subtitle)}${filters}<div class="place-grid">${list.map(placeCard).join('')}</div></section>`);
+  const subtitle=mode==='tourism' ? '추천 명소와 내가 저장한 관광지를 함께 봐요' : '추천 식당·카페와 내가 찾은 장소를 함께 봐요';
+  const filters=mode==='food' ? `<div class="filter-row">${['전체','맛집','카페'].map(x=>`<button class="filter-chip ${f===x?'active':''}" data-filter="${x}">${x}</button>`).join('')}</div>` : '';
+  return shell(`<section class="page">${topbar(title,subtitle)}${filters}
+    ${mine.length?`<div class="section-label saved-catalog-title"><h2>내가 저장한 장소</h2><span class="status-pill">${mine.length}곳</span></div><div class="place-grid">${mine.map(userPlaceCatalogCard).join('')}</div>`:''}
+    <div class="section-label saved-catalog-title"><h2>앱 추천 장소</h2><span class="status-pill">${base.length}곳</span></div><div class="place-grid">${base.map(placeCard).join('')}</div>
+  </section>`);
 }
 function renderPlace(){ const p=places.find(x=>x.id===APP.state.place); if(!p)return renderPlaces(); return shell(`<section class="page">${topbar('', '', true)}<img class="detail-photo" src="${p.image}" alt="${p.name}"><h1 class="detail-name">${p.name}</h1><div class="detail-jp">${p.jp} · ${p.pron}</div><div class="place-rating">★ ${p.rating}</div><p class="detail-desc">${p.desc}</p>
   ${p.recommend?`<div class="detail-recommend"><strong>내 추천 포인트</strong><p>${p.recommend}</p></div>`:''}<div class="info-box"><h3>한눈에 보기</h3><div class="info-list"><div class="info-row"><span>여행일</span><strong>DAY ${p.day}</strong></div><div class="info-row"><span>운영/시간</span><strong>${p.hours}</strong></div><div class="info-row"><span>예상 비용</span><strong>${p.budget}</strong></div><div class="info-row"><span>위치</span><strong>${p.location}</strong></div>${p.menu?`<div class="info-row"><span>추천 메뉴</span><strong>${p.menu}</strong></div>`:''}</div></div>
@@ -424,8 +439,11 @@ async function initCloud(initialSession=null){
   if(!cloudConfigured()) return;
   try{
     APP.cloudSession=initialSession || await window.SapporoCloud.getSession();
-    window.SapporoCloud.onAuthChange(async session=>{ APP.cloudSession=session; if(session) await syncCloudPlaces(false); if(APP.state.view==='myplaces') render(); });
-    if(APP.cloudSession) await syncCloudPlaces(false);
+    window.SapporoCloud.onAuthChange(async session=>{ APP.cloudSession=session; if(session) await syncCloudPlaces(false); if(['myplaces','favorites','places','maps'].includes(APP.state.view)) render(); });
+    if(APP.cloudSession){
+      await syncCloudPlaces(false);
+      if(['myplaces','favorites','places','maps'].includes(APP.state.view)) render();
+    }
   }catch(e){ console.warn('cloud init',e); }
 }
 async function syncCloudPlaces(show=true){
@@ -457,7 +475,7 @@ function renderMyPlaces(){
   const all=getUserPlaces(); const filter=APP.state.myPlaceFilter||'전체'; const cats=['전체','맛집','카페','관광','쇼핑']; const list=filter==='전체'?all:all.filter(x=>x.category===filter);
   let cloud='';
   if(!cloudConfigured()) cloud=`<div class="cloud-card warning"><strong>☁ 클라우드 연결 전</strong><p>지금 저장해도 이 기기에는 남습니다. PC·휴대폰 동기화를 켜려면 Supabase 1회 설정이 필요해요.</p></div>`;
-  else if(!cloudSignedIn()) cloud=`<div class="cloud-card"><strong>☁ 클라우드 로그인</strong><p>같은 이메일로 로그인하면 PC와 휴대폰에서 같은 장소를 볼 수 있어요.</p><div class="cloud-login"><input id="cloudEmail" type="email" placeholder="이메일 주소"><button class="primary-btn" id="cloudLogin">로그인 링크 받기</button></div></div>`;
+  else if(!cloudSignedIn()) cloud=`<div class="cloud-card"><strong>☁ 클라우드 로그인</strong><p>같은 계정으로 로그인하면 PC와 휴대폰에서 같은 장소를 볼 수 있어요. 기기마다 최초 1회 로그인이 필요합니다.</p><div class="cloud-login-actions"><button class="google-login-btn" id="cloudGoogleLogin"><span>G</span> Google로 로그인</button><div class="cloud-divider"><span>또는 이메일 링크</span></div><div class="cloud-login"><input id="cloudEmail" type="email" placeholder="이메일 주소"><button class="primary-btn" id="cloudLogin">로그인 링크 받기</button></div></div></div>`;
   else cloud=`<div class="cloud-card ok"><strong>✓ 클라우드 동기화 중</strong><p>${esc(APP.cloudSession.user.email||'로그인됨')}</p><div class="saved-place-actions"><button id="cloudSync">지금 동기화</button><button id="cloudSignout">로그아웃</button></div></div>`;
   return shell(`<section class="page">${topbar('내 장소','인스타·웹에서 찾은 맛집과 카페를 저장해요',true)}
     ${cloud}
@@ -657,6 +675,7 @@ function bind(){
   const imgUP=q('#userPlaceImage'); if(imgUP) imgUP.onchange=()=>{pendingUserPlaceImage=null;analyzeSelectedPlaceImage();};
   const retryAI=q('#reanalyzePlaceImage'); if(retryAI) retryAI.onclick=analyzeSelectedPlaceImage;
   const saveUP=q('#saveUserPlace'); if(saveUP) saveUP.onclick=saveUserPlaceFromForm;
+  const cloudGoogleLogin=q('#cloudGoogleLogin'); if(cloudGoogleLogin) cloudGoogleLogin.onclick=async()=>{try{await window.SapporoCloud.signInWithGoogle();}catch(e){console.warn(e);const msg=String(e?.message||'');toast(/provider.*disabled|unsupported provider/i.test(msg)?'Supabase에서 Google 로그인을 먼저 활성화해 주세요':(msg?`Google 로그인 실패: ${msg}`:'Google 로그인에 실패했어요'));}};
   const cloudLogin=q('#cloudLogin'); if(cloudLogin) cloudLogin.onclick=async()=>{const email=q('#cloudEmail').value.trim();if(!email){toast('이메일을 입력해 주세요');return;}try{await window.SapporoCloud.sendMagicLink(email);toast('이메일로 로그인 링크를 보냈어요');}catch(e){console.warn(e);const msg=String(e?.message||'');if(Number(e?.status)===429||/rate limit/i.test(msg))toast('메일 발송 한도 초과예요. 잠시 후 다시 시도해 주세요');else toast(msg?`로그인 실패: ${msg}`:'로그인 링크 전송에 실패했어요');}};
   const cloudSync=q('#cloudSync'); if(cloudSync) cloudSync.onclick=pushUnsyncedPlaces;
   const cloudSignout=q('#cloudSignout'); if(cloudSignout) cloudSignout.onclick=async()=>{await window.SapporoCloud.signOut();APP.cloudSession=null;toast('클라우드에서 로그아웃했어요');render();};
@@ -739,7 +758,7 @@ async function refreshCloudOnResume(){
   clearTimeout(_cloudRefreshTimer);
   _cloudRefreshTimer=setTimeout(async()=>{
     await syncCloudPlaces(false);
-    if(['myplaces','favorites'].includes(APP.state.view)) render();
+    if(['myplaces','favorites','places','maps'].includes(APP.state.view)) render();
   },120);
 }
 window.addEventListener('focus', refreshCloudOnResume);

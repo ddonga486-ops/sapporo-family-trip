@@ -1,4 +1,4 @@
-// SAPPORO FAMILY TRIP v9 · Supabase cloud adapter · explicit auth callback handling
+// SAPPORO FAMILY TRIP v10 · Supabase cloud adapter · explicit auth callback handling
 window.SapporoCloud = (() => {
   let client = null;
   let sdkPromise = null;
@@ -78,8 +78,35 @@ window.SapporoCloud = (() => {
     const c=await getClient(); await requireUser();
     if(!imageDataUrl) throw new Error('분석할 사진이 없습니다');
     const {data,error}=await c.functions.invoke('analyze-place',{body:{imageDataUrl}});
-    if(error) throw error;
-    if(!data?.ok) throw new Error(data?.error||'AI 분석 응답이 올바르지 않습니다');
+    if(error){
+      let detail='';
+      try{
+        const response=error.context;
+        if(response && typeof response.clone==='function'){
+          const clone=response.clone();
+          const json=await clone.json().catch(()=>null);
+          detail=String(json?.error||json?.message||'');
+        }
+      }catch{}
+      const raw=(detail||error.message||'AI 분석 서버 호출에 실패했습니다').trim();
+      if(/no credits remaining|credit_balance_exhausted|insufficient_quota|quota/i.test(raw)){
+        throw new Error('OpenAI API 크레딧이 없습니다. API 결제에서 크레딧을 충전한 뒤 다시 분석해 주세요.');
+      }
+      if(/model.*not found|does not exist|unsupported model/i.test(raw)){
+        throw new Error('AI 모델 설정 오류입니다. analyze-place 함수의 모델 설정을 확인해 주세요.');
+      }
+      if(/401|invalid api key|incorrect api key|authentication/i.test(raw)){
+        throw new Error('OpenAI API 키 인증에 실패했습니다. Supabase의 OPENAI_API_KEY를 확인해 주세요.');
+      }
+      throw new Error(raw);
+    }
+    if(!data?.ok){
+      const raw=String(data?.error||'AI 분석 응답이 올바르지 않습니다');
+      if(/no credits remaining|credit_balance_exhausted|insufficient_quota|quota/i.test(raw)){
+        throw new Error('OpenAI API 크레딧이 없습니다. API 결제에서 크레딧을 충전한 뒤 다시 분석해 주세요.');
+      }
+      throw new Error(raw);
+    }
     return data.result||{};
   }
 

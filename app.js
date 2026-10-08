@@ -1,4 +1,4 @@
-// SAPPORO FAMILY TRIP v7 · 2026-10-08 · compact home + fast launch
+// SAPPORO FAMILY TRIP v11 · startup/cache + cross-device auto sync
 const APP = {
   tripStart: new Date('2026-10-20T00:00:00+09:00'),
   tripEnd: new Date('2026-10-23T23:59:59+09:00'),
@@ -622,7 +622,15 @@ function render(){
   q('#app').innerHTML=html; bind();
 }
 function bind(){
-  qa('[data-nav]').forEach(b=>b.onclick=()=>go(b.dataset.nav));
+  qa('[data-nav]').forEach(b=>b.onclick=async()=>{
+    const view=b.dataset.nav;
+    go(view);
+    // 다른 기기에서 저장한 장소를 '내 장소' 진입 시 즉시 다시 불러옵니다.
+    if(view==='myplaces' && cloudConfigured() && cloudSignedIn()){
+      await syncCloudPlaces(false);
+      if(APP.state.view==='myplaces') render();
+    }
+  });
   qa('[data-place-mode]').forEach(b=>b.onclick=()=>go('places',{placeMode:b.dataset.placeMode,placeFilter:'전체'}));
   qa('[data-day]').forEach(b=>b.onclick=()=>go('day',{day:Number(b.dataset.day),dayTab:'schedule'}));
   qa('[data-daytab]').forEach(b=>b.onclick=()=>replaceViewState({dayTab:b.dataset.daytab}));
@@ -687,7 +695,9 @@ window.addEventListener('popstate',e=>{
   render();
   window.scrollTo({top:0,behavior:'auto'});
 });
-if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js?v=9').catch(()=>{});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  navigator.serviceWorker.register('/sw.js?v=11', {scope:'/'}).then(reg=>reg.update().catch(()=>{})).catch(()=>{});
+}
 async function bootstrapApp(){
   const authCallback=hasSupabaseAuthCallback();
   let authOk=false;
@@ -722,4 +732,17 @@ async function bootstrapApp(){
   // 일반 실행은 첫 화면을 먼저 그리고 클라우드를 뒤에서 초기화합니다.
   if(!authCallback) setTimeout(()=>initCloud(),0);
 }
+
+let _cloudRefreshTimer = 0;
+async function refreshCloudOnResume(){
+  if(!cloudConfigured() || !cloudSignedIn()) return;
+  clearTimeout(_cloudRefreshTimer);
+  _cloudRefreshTimer=setTimeout(async()=>{
+    await syncCloudPlaces(false);
+    if(['myplaces','favorites'].includes(APP.state.view)) render();
+  },120);
+}
+window.addEventListener('focus', refreshCloudOnResume);
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') refreshCloudOnResume(); });
+
 bootstrapApp();

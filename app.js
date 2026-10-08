@@ -415,6 +415,11 @@ function sourceLabel(url='', type=''){ if(type) return type; if(!url) return '�
 function normalizeCloudPlace(r){ return {id:r.id,cloudId:r.id,synced:true,name:r.name||'',category:r.category||'맛집',area:r.area||'',sourceUrl:r.source_url||'',sourceType:r.source_type||'',note:r.note||'',dayCandidate:r.day_candidate?`DAY ${r.day_candidate}`:'미정',favorite:r.favorite!==false,image:r.image_url||'',imagePath:r.image_path||'',createdAt:r.created_at||new Date().toISOString()}; }
 function cloudConfigured(){ return Boolean(window.SapporoCloud?.configured?.()); }
 function cloudSignedIn(){ return Boolean(APP.cloudSession?.user); }
+function hasSupabaseAuthCallback(){
+  const h=location.hash||'';
+  const q=location.search||'';
+  return /(?:^#|[&#])(access_token|refresh_token|expires_in|token_type|type|error|error_code|error_description)=/i.test(h) || /[?&](code|error|error_code|error_description)=/i.test(q);
+}
 async function initCloud(){
   if(!cloudConfigured()) return;
   try{
@@ -644,7 +649,7 @@ function bind(){
   const imgUP=q('#userPlaceImage'); if(imgUP) imgUP.onchange=()=>{pendingUserPlaceImage=null;analyzeSelectedPlaceImage();};
   const retryAI=q('#reanalyzePlaceImage'); if(retryAI) retryAI.onclick=analyzeSelectedPlaceImage;
   const saveUP=q('#saveUserPlace'); if(saveUP) saveUP.onclick=saveUserPlaceFromForm;
-  const cloudLogin=q('#cloudLogin'); if(cloudLogin) cloudLogin.onclick=async()=>{const email=q('#cloudEmail').value.trim();if(!email){toast('이메일을 입력해 주세요');return;}try{await window.SapporoCloud.sendMagicLink(email);toast('이메일로 로그인 링크를 보냈어요');}catch(e){console.warn(e);toast('로그인 링크 전송에 실패했어요');}};
+  const cloudLogin=q('#cloudLogin'); if(cloudLogin) cloudLogin.onclick=async()=>{const email=q('#cloudEmail').value.trim();if(!email){toast('이메일을 입력해 주세요');return;}try{await window.SapporoCloud.sendMagicLink(email);toast('이메일로 로그인 링크를 보냈어요');}catch(e){console.warn(e);const msg=String(e?.message||'');if(Number(e?.status)===429||/rate limit/i.test(msg))toast('메일 발송 한도 초과예요. 잠시 후 다시 시도해 주세요');else toast(msg?`로그인 실패: ${msg}`:'로그인 링크 전송에 실패했어요');}};
   const cloudSync=q('#cloudSync'); if(cloudSync) cloudSync.onclick=pushUnsyncedPlaces;
   const cloudSignout=q('#cloudSignout'); if(cloudSignout) cloudSignout.onclick=async()=>{await window.SapporoCloud.signOut();APP.cloudSession=null;toast('클라우드에서 로그아웃했어요');render();};
   const ib=q('#installBtn'); if(ib) ib.onclick=installApp;
@@ -683,8 +688,22 @@ window.addEventListener('popstate',e=>{
   window.scrollTo({top:0,behavior:'auto'});
 });
 if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js?v=6').catch(()=>{});
-window.addEventListener('sapporo-cloud-ready',()=>initCloud());
-initNavigation();
-render();
-// 클라우드는 첫 화면 렌더 후 지연 초기화하여 앱 시작 속도를 우선합니다.
-setTimeout(()=>initCloud(),0);
+async function bootstrapApp(){
+  const authCallback=hasSupabaseAuthCallback();
+  // Magic Link 콜백에서는 Supabase가 URL의 인증 토큰을 읽기 전에 앱 라우터가 #home으로 덮어쓰지 않도록 먼저 세션을 복구합니다.
+  if(authCallback && cloudConfigured()){
+    try{
+      await initCloud();
+    }catch(e){
+      console.warn('auth callback init',e);
+    }
+    // 인증 정보가 localStorage에 저장된 뒤 URL의 일회성 토큰을 제거합니다.
+    history.replaceState(null,'',location.pathname+'#home');
+  }
+  initNavigation();
+  render();
+  if(authCallback && cloudSignedIn()) setTimeout(()=>toast('클라우드 로그인 완료'),120);
+  // 일반 실행은 기존처럼 첫 화면을 먼저 그리고 클라우드를 뒤에서 초기화합니다.
+  if(!authCallback) setTimeout(()=>initCloud(),0);
+}
+bootstrapApp();

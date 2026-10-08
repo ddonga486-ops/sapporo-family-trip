@@ -1,7 +1,7 @@
-// SAPPORO FAMILY TRIP v7 · fast-start cache
-const CACHE = 'sapporo-family-trip-v7';
+// SAPPORO FAMILY TRIP v8 · auth-callback-safe cache
+const CACHE = 'sapporo-family-trip-v8';
 const CORE = [
-  './','./index.html','./styles.css?v=7','./app.js?v=7','./cloud.js?v=7','./supabase-config.js?v=7','./manifest.webmanifest',
+  './','./index.html','./styles.css?v=8','./app.js?v=8','./cloud.js?v=8','./supabase-config.js?v=8','./manifest.webmanifest',
   './assets/day1-otaru.jpg','./assets/day2-jozankei.jpg','./assets/day3-sapporo.jpg','./assets/day4-airport.jpg',
   './assets/otaru-canal.jpg','./assets/naruto-food.jpg','./assets/letao-dessert.jpg','./assets/bichon-home.jpg','./assets/bichon-route.jpg',
   './assets/icon-192.png','./assets/icon-512.png'

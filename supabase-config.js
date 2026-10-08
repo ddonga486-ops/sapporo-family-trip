@@ -1,6 +1,6 @@
 // SAPPORO FAMILY TRIP v5 · Supabase connection
 // Supabase 프로젝트를 만든 뒤 아래 두 값만 교체하세요.
 window.SAPPORO_SUPABASE = {
-  url: 'PASTE_SUPABASE_PROJECT_URL_HERE',
-  anonKey: 'PASTE_SUPABASE_ANON_PUBLIC_KEY_HERE'
+  url: 'https://ewdzwlccnponyoywjdrr.supabase.co',
+  anonKey: 'sb_publishable_4J7h_4ngUl1zk83KQ5HD8g_mrMi1d7b'
 };

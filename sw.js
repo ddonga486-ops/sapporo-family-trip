@@ -1,7 +1,7 @@
-// SAPPORO FAMILY TRIP v8 · auth-callback-safe cache
-const CACHE = 'sapporo-family-trip-v8';
+// SAPPORO FAMILY TRIP v9 · auth-session-safe cache
+const CACHE = 'sapporo-family-trip-v9';
 const CORE = [
-  './','./index.html','./styles.css?v=8','./app.js?v=8','./cloud.js?v=8','./supabase-config.js?v=8','./manifest.webmanifest',
+  './','./index.html','./styles.css?v=9','./app.js?v=9','./cloud.js?v=9','./supabase-config.js?v=9','./manifest.webmanifest',
   './assets/day1-otaru.jpg','./assets/day2-jozankei.jpg','./assets/day3-sapporo.jpg','./assets/day4-airport.jpg',
   './assets/otaru-canal.jpg','./assets/naruto-food.jpg','./assets/letao-dessert.jpg','./assets/bichon-home.jpg','./assets/bichon-route.jpg',
   './assets/icon-192.png','./assets/icon-512.png'
@@ -29,7 +29,16 @@ self.addEventListener('fetch', event => {
   }
   const isCore=/\/(?:app\.js|styles\.css|cloud\.js|supabase-config\.js|manifest\.webmanifest)$/.test(url.pathname) || url.pathname.includes('/assets/');
   if(isCore){
-    event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request).then(r=>{const copy=r.clone();caches.open(CACHE).then(c=>c.put(event.request,copy));return r})));
+    event.respondWith((async()=>{
+      const cache=await caches.open(CACHE);
+      try{
+        const r=await fetch(event.request);
+        if(r&&r.ok) await cache.put(event.request,r.clone());
+        return r;
+      }catch{
+        return (await cache.match(event.request)) || Response.error();
+      }
+    })());
     return;
   }
   event.respondWith(fetch(event.request).catch(()=>caches.match(event.request)));

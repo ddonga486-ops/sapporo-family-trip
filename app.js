@@ -420,10 +420,10 @@ function hasSupabaseAuthCallback(){
   const q=location.search||'';
   return /(?:^#|[&#])(access_token|refresh_token|expires_in|token_type|type|error|error_code|error_description)=/i.test(h) || /[?&](code|error|error_code|error_description)=/i.test(q);
 }
-async function initCloud(){
+async function initCloud(initialSession=null){
   if(!cloudConfigured()) return;
   try{
-    APP.cloudSession=await window.SapporoCloud.getSession();
+    APP.cloudSession=initialSession || await window.SapporoCloud.getSession();
     window.SapporoCloud.onAuthChange(async session=>{ APP.cloudSession=session; if(session) await syncCloudPlaces(false); if(APP.state.view==='myplaces') render(); });
     if(APP.cloudSession) await syncCloudPlaces(false);
   }catch(e){ console.warn('cloud init',e); }
@@ -687,23 +687,39 @@ window.addEventListener('popstate',e=>{
   render();
   window.scrollTo({top:0,behavior:'auto'});
 });
-if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js?v=6').catch(()=>{});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js?v=9').catch(()=>{});
 async function bootstrapApp(){
   const authCallback=hasSupabaseAuthCallback();
-  // Magic Link 콜백에서는 Supabase가 URL의 인증 토큰을 읽기 전에 앱 라우터가 #home으로 덮어쓰지 않도록 먼저 세션을 복구합니다.
+  let authOk=false;
+  let authError=null;
+
+  // Magic Link/PKCE 콜백을 앱 라우터보다 먼저 명시적으로 처리합니다.
+  // implicit(#access_token...)과 PKCE(?code=...) 둘 다 지원합니다.
   if(authCallback && cloudConfigured()){
     try{
-      await initCloud();
+      const session=await window.SapporoCloud.consumeAuthCallback();
+      await initCloud(session);
+      authOk=Boolean(session?.user || APP.cloudSession?.user);
     }catch(e){
+      authError=e;
       console.warn('auth callback init',e);
     }
-    // 인증 정보가 localStorage에 저장된 뒤 URL의 일회성 토큰을 제거합니다.
-    history.replaceState(null,'',location.pathname+'#home');
+    // 일회성 인증정보는 처리 후 주소에서 제거합니다.
+    history.replaceState(null,'',location.pathname+(authOk?'#myplaces':'#myplaces'));
   }
+
   initNavigation();
   render();
-  if(authCallback && cloudSignedIn()) setTimeout(()=>toast('클라우드 로그인 완료'),120);
-  // 일반 실행은 기존처럼 첫 화면을 먼저 그리고 클라우드를 뒤에서 초기화합니다.
+
+  if(authCallback && authOk){
+    setTimeout(()=>toast('클라우드 로그인 완료'),160);
+  }else if(authCallback && authError){
+    setTimeout(()=>toast(`로그인 처리 실패: ${String(authError?.message||'다시 로그인해 주세요')}`),180);
+  }else if(authCallback && !authOk){
+    setTimeout(()=>toast('로그인 세션을 만들지 못했어요. 새 링크로 다시 시도해 주세요'),180);
+  }
+
+  // 일반 실행은 첫 화면을 먼저 그리고 클라우드를 뒤에서 초기화합니다.
   if(!authCallback) setTimeout(()=>initCloud(),0);
 }
 bootstrapApp();

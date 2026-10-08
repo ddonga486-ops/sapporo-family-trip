@@ -1,4 +1,4 @@
-// SAPPORO FAMILY TRIP v7 · Supabase cloud adapter · lazy SDK loading
+// SAPPORO FAMILY TRIP v9 · Supabase cloud adapter · explicit auth callback handling
 window.SapporoCloud = (() => {
   let client = null;
   let sdkPromise = null;
@@ -22,10 +22,41 @@ window.SapporoCloud = (() => {
     if(client) return client;
     await ensureSdk();
     const c=config();
-    client=window.supabase.createClient(c.url,c.anonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    client=window.supabase.createClient(c.url,c.anonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
     return client;
   }
   async function getSession(){ const c=await getClient(); if(!c)return null; const {data,error}=await c.auth.getSession(); if(error)throw error; return data.session; }
+  async function consumeAuthCallback(){
+    // Capture the callback parameters before Supabase or the app router can touch the URL.
+    const callbackUrl = new URL(window.location.href);
+    const hash = new URLSearchParams((callbackUrl.hash || '').replace(/^#/, ''));
+    const queryError = callbackUrl.searchParams.get('error_description') || callbackUrl.searchParams.get('error');
+    const hashError = hash.get('error_description') || hash.get('error');
+    if(queryError || hashError) throw new Error(decodeURIComponent(queryError || hashError));
+
+    const code = callbackUrl.searchParams.get('code');
+    const flowId = callbackUrl.searchParams.get('sb_flow_id');
+    const accessToken = hash.get('access_token');
+    const refreshToken = hash.get('refresh_token');
+    const c = await getClient();
+    if(!c) throw new Error('Supabase not configured');
+
+    if(code){
+      const {data,error}=await c.auth.exchangeCodeForSession(code, flowId ? {flowId} : undefined);
+      if(error) throw error;
+      return data?.session || null;
+    }
+    if(accessToken && refreshToken){
+      const {data,error}=await c.auth.setSession({access_token:accessToken,refresh_token:refreshToken});
+      if(error) throw error;
+      return data?.session || null;
+    }
+
+    // Fallback for a callback already consumed by the SDK/storage.
+    const {data,error}=await c.auth.getSession();
+    if(error) throw error;
+    return data?.session || null;
+  }
   async function sendMagicLink(email){ const c=await getClient(); if(!c)throw new Error('Supabase not configured'); const redirectTo=location.origin+location.pathname; const {error}=await c.auth.signInWithOtp({email,options:{emailRedirectTo:redirectTo}}); if(error)throw error; }
   async function signOut(){ const c=await getClient(); if(!c)return; const {error}=await c.auth.signOut(); if(error)throw error; }
   async function onAuthChange(fn){ const c=await getClient(); if(!c)return; c.auth.onAuthStateChange((_event,session)=>fn(session)); }
@@ -55,6 +86,6 @@ window.SapporoCloud = (() => {
   async function deletePlace(id,imagePath=''){
     const c=await getClient(); await requireUser(); if(imagePath){const {error:sErr}=await c.storage.from('place-images').remove([imagePath]); if(sErr)console.warn(sErr)} const {error}=await c.from('saved_places').delete().eq('id',id); if(error)throw error;
   }
-  return {configured,getSession,sendMagicLink,signOut,onAuthChange,listPlaces,savePlace,deletePlace,analyzePlaceImage};
+  return {configured,getSession,consumeAuthCallback,sendMagicLink,signOut,onAuthChange,listPlaces,savePlace,deletePlace,analyzePlaceImage};
 })();
 window.dispatchEvent(new Event('sapporo-cloud-ready'));

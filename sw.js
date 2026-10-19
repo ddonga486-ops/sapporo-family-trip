@@ -1,7 +1,7 @@
-// SAPPORO FAMILY TRIP v12 · stable offline-first app shell
-const CACHE = 'sapporo-family-trip-v12';
+// SAPPORO FAMILY TRIP v14 · stable offline-first app shell
+const CACHE = 'sapporo-family-trip-v14';
 const CORE = [
-  '/', '/index.html', '/styles.css?v=12', '/app.js?v=12', '/cloud.js?v=12', '/supabase-config.js?v=12', '/manifest.webmanifest',
+  '/', '/index.html', '/styles.css?v=14', '/app.js?v=14', '/trip-2026-10-update.js?v=14', '/cloud.js?v=14', '/supabase-config.js?v=14', '/manifest.webmanifest',
   '/assets/day1-otaru.jpg','/assets/day2-jozankei.jpg','/assets/day3-sapporo.jpg','/assets/day4-airport.jpg',
   '/assets/otaru-canal.jpg','/assets/naruto-food.jpg','/assets/letao-dessert.jpg','/assets/bichon-home.jpg','/assets/bichon-route.jpg',
   '/assets/icon-192.png','/assets/icon-512.png'
@@ -40,7 +40,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  const isCore=/\/(?:app\.js|styles\.css|cloud\.js|supabase-config\.js|manifest\.webmanifest)$/.test(url.pathname) || url.pathname.includes('/assets/');
+  const isCore=/\/(?:app\.js|trip-2026-10-update\.js|styles\.css|cloud\.js|supabase-config\.js|manifest\.webmanifest)$/.test(url.pathname) || url.pathname.includes('/assets/');
   if(isCore){
     event.respondWith((async()=>{
       const cache=await caches.open(CACHE);

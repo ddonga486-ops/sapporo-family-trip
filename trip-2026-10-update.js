@@ -269,6 +269,160 @@
     map:'https://www.google.com/maps/search/?api=1&query=MEGA+Don+Quijote+Sapporo+Tanukikoji'
   });
 
+
+  // Confirmed family plan for 2026-10-22: Hokkaido University + city shopping.
+  const updatedOne=d(1);
+  if(updatedOne){
+    const canal=updatedOne.events.find(e=>e.place==='otaru-canal');
+    if(canal)Object.assign(canal,{
+      desc:'10/20 오타루 일몰 약 16:45 · 노을을 보고 가스등과 운하 창고 조명이 켜진 뒤까지 가족사진\n16:20~17:10 전후 감상 후 규카츠 역앞점으로 도보 이동 · 노면 주의'
+    });
+    if(!updatedOne.events.some(e=>e.place==='nikka-sign')){
+      updatedOne.events.push({
+        time:'20:15',icon:'🌆',title:'[선택] 스스키노 닛카 간판 야경',
+        desc:'호텔 체크인 후 모두가 덜 피곤하면 스스키노 사거리 네온 간판 앞에서 10~15분만 가족사진 · 무료\n첫날은 오타루 운하 가스등 야경을 이미 보므로 힘들면 생략',
+        place:'nikka-sign',route:'hotel-susukino-night'
+      });
+    }
+    sort(updatedOne);
+  }
+  const updatedThree=d(3);
+  if(updatedThree){
+    updatedThree.subtitle='신궁 · 롯카테이 · 홋카이도 대학 · 우동 · 쇼핑 · 와규 · 선택 야경';
+    updatedThree.events=updatedThree.events.filter(e=>e.title!=='신궁 → 삿포로역');
+    const rokkatei=updatedThree.events.find(e=>e.place==='rokkatei');
+    if(rokkatei)Object.assign(rokkatei,{
+      time:'10:20',title:'롯카테이 신궁차야점 · 한간사마',
+      desc:'신궁 경내의 롯카테이 찻집 · 따뜻한 팥소 떡(判官さま)을 간식으로\n약 15~20분 쉬었다가 홋카이도 대학으로 이동'
+    });
+    updatedThree.events.push(
+      {time:'10:40',icon:'🚇',title:'신궁 → 홋카이도 대학 이동',
+       desc:'마루야마코엔역까지 도보 → 도자이선 오도리역 환승 → 난보쿠선 북12조역 → 북13조문\n환승·도보를 감안한 이동 시간 여유 있게 확보',
+       route:'shrine-university'},
+      {time:'11:25',icon:'🍂',title:'홋카이도 대학 은행나무길',
+       desc:'북13조문 근처 약 380m 은행나무길과 대학 캠퍼스의 가을 풍경 감상 · 가족사진\n첫째에게 일본 대학의 분위기를 보여주는 시간 · 무료 · 단풍색은 실제 날씨에 따라 다름',
+       place:'hokudai-ginkgo',route:'shrine-university'},
+      {time:'12:05',icon:'🚶',title:'홋카이도 대학 → 삿포로역 아피아',
+       desc:'산책 후 삿포로역 아피아 지하상가로 도보 약 15~25분 또는 북12조역에서 지하철 이용',
+       route:'university-udon'}
+    );
+    for(const [id,time,desc] of [
+      ['kineya','12:30','홋카이도 대학 산책 후 삿포로역 아피아 B1F 우동 점심'],
+      ['gu-mitsukoshi','13:30','삿포로 미츠코시 본관 10층 GU·유니클로 쇼핑'],
+      ['standard-moyuk','14:30','moyuk SAPPORO 2층 스탠다드 프로덕츠 생활잡화 쇼핑'],
+      ['daiso-tanukikoji2','15:15','다누키코지 2초메 대형 다이소 쇼핑']
+    ]){
+      const e=updatedThree.events.find(x=>x.place===id);
+      if(e)Object.assign(e,{time,desc});
+    }
+    const rest=updatedThree.events.find(e=>e.title==='카페 휴식 · 자유 쇼핑');
+    if(rest)Object.assign(rest,{time:'16:05',desc:'시내 카페·자유 쇼핑·호텔에 짐 놓기 · 19:00 저녁 전 충분한 휴식'});
+    const donki=updatedThree.events.find(e=>e.place==='donki-tanukikoji');
+    if(donki)Object.assign(donki,{time:'20:45',desc:'신라테이 → [선택] 노르베사 관람차 → MEGA 돈키호테 마지막 쇼핑\n관람차를 생략하면 20:30부터 돈키호테 쇼핑 가능',route:'noria-donki'});
+    const hotel=updatedThree.events.find(e=>e.title==='호텔 복귀');
+    if(hotel)Object.assign(hotel,{time:'21:45',desc:'돈키호테 쇼핑 후 짐 정리 · 다음 날 귀국 준비'});
+    updatedThree.events.push({
+      time:'20:15',icon:'🎡',title:'[선택] 노르베사 노리아 관람차 야경',
+      desc:'신라테이 바로 근처 노르베사 7층에서 한 바퀴 약 10분 · 가족 4명 한 곤돌라 탑승 가능\n성인 ¥1,000×2 + 초중학생 ¥500×2 = 총 ¥3,000\n날씨·대기·피로를 보고 탑승 결정. 생략하면 바로 돈키호테',
+      place:'noria',route:'noria-donki'
+    });
+    sort(updatedThree);
+  }
+  routes['shrine-university']={
+    title:'홋카이도 신궁 → 홋카이도 대학 은행나무길',tag:'DAY 3 · 캠퍼스 산책',
+    time:'약 40~55분(도보·환승 포함)',fare:'지하철 도자이선 → 난보쿠선',
+    map:'https://www.google.com/maps/dir/?api=1&origin=Hokkaido+Jingu&destination=Hokkaido+University+Ginkgo+Avenue&travelmode=transit',
+    tip:'신궁 안 롯카테이에서 간식 후 마루야마코엔역으로 돌아가 오도리역 환승 → 북12조역 하차. 북13조문으로 도보 이동.',
+    steps:[
+      ['롯카테이 신궁차야','六花亭 神宮茶屋店','롯카테이 진구 차야텐','신궁 안 과자 찻집','참배 후 한간사마를 먹고 10:40 전후 이동 시작.'],
+      ['마루야마코엔역','円山公園駅','마루야마코엔에키','마루야마코엔역','도자이선 오도리역 방면 탑승.'],
+      ['오도리역 환승','大通駅','오도리에키','오도리역','난보쿠선 아사부(麻生) 방면으로 환승.'],
+      ['북12조역 하차','北12条駅','키타주니조에키','북12조역','북13조문까지 도보 이동.'],
+      ['홋카이도 대학 은행나무길','北海道大学 イチョウ並木','홋카이도 다이가쿠 이초나미키','은행나무길','약 380m 산책로에서 단풍과 캠퍼스 분위기를 즐겨요.']
+    ]
+  };
+  routes['university-udon']={
+    title:'홋카이도 대학 → 삿포로역 아피아 우동',tag:'DAY 3 · 점심 이동',
+    time:'약 15~25분(도보 위치별 차이)',fare:'도보 또는 지하철',
+    map:'https://www.google.com/maps/dir/?api=1&origin=Hokkaido+University+Ginkgo+Avenue&destination=Kineya+Sapporo+Apia&travelmode=walking',
+    tip:'은행나무길을 나온 뒤 남쪽 삿포로역으로 가서 아피아 지하상가로 이동해요.',
+    steps:[
+      ['북13조문 방향으로 나오기','北13条門','키타주산조몬','홋카이도 대학 북13조문','은행나무길 구경 후 교문 밖으로.'],
+      ['삿포로역으로 이동','札幌駅','삿포로에키','삿포로역','도보 약 15~25분 또는 북12조역 지하철로 1정거장.'],
+      ['키네야 우동','杵屋 札幌アピア店','키네야 삿포로 아피아텐','아피아 우동집','12:30 전후 점심 식사.']
+    ]
+  };
+  delete routes['shrine-station'];
+  if(routes['station-shops']){
+    routes['station-shops'].time='12:30 우동 → 13:30 GU → 14:30 Standard Products → 15:15 다이소';
+  }
+  routes['hotel-susukino-night']={
+    title:'숙소 → 스스키노 닛카 간판 야경',tag:'DAY 1 · 선택 관광',
+    time:'약 10~15분 사진 산책',fare:'무료',
+    map:'https://www.google.com/maps/dir/?api=1&origin=Sotetsu+Fresa+Inn+Sapporo+Susukino&destination=Nikka+Whisky+Sign+Susukino&travelmode=walking',
+    tip:'첫날 비행기·오타루 이동으로 피곤하면 생략해도 좋아요. 이미 오타루 운하에서 가스등 야경을 봤어요.',
+    steps:[
+      ['호텔 체크인','相鉄フレッサイン札幌すすきの','소테츠 후렛사 인 삿포로 스스키노','숙소','캐리어를 받고 체크인 후 컨디션 확인.'],
+      ['스스키노 사거리','すすきの交差点','스스키노 코사텐','스스키노 닛카 간판','삿포로 특유의 네온 야경을 짧게 촬영.'],
+      ['호텔 복귀','豊水すすきの駅','호스이스스키노에키','호텔 근처 역','첫날은 일찍 휴식.']
+    ]
+  };
+  routes['noria-donki']={
+    title:'신라테이 와규 → 노리아 관람차(선택) → 돈키호테',tag:'DAY 3 · 선택 야경',
+    time:'20:15 관람차 → 20:45 돈키호테',fare:'관람차 4인 ¥3,000 (선택)',
+    map:'https://www.google.com/maps/dir/?api=1&origin=Tokujyu+Shinratei+Sapporo&destination=MEGA+Don+Quijote+Sapporo+Tanukikoji&waypoints=nORBESA+Sapporo&travelmode=walking',
+    tip:'신라테이와 노르베사는 같은 남3조 서5초메 지역에 있어요. 한 바퀴 약 10분 탑승 후 돈키호테로 이동합니다. 관람차를 건너뛰면 돈키호테를 더 일찍 갈 수 있어요.',
+    steps:[
+      ['와규 저녁 식사','徳寿 しんら亭','토쿠주 신라테이','와규 야키니쿠','19:00 전후 식사, 늦어지면 관람차 선택 관광은 생략.'],
+      ['노르베사 노리아 관람차','ノルベサ 観覧車ノリア','노르베사 칸란샤 노리아','노르베사 7층','20:15 전후, 한 바퀴 약 10분 · 성인 1천엔, 초중학생 500엔.'],
+      ['돈키호테 쇼핑','MEGAドン・キホーテ札幌狸小路本店','메가 돈키호테 삿포로 다누키코지 혼텐','MEGA 돈키호테','20:45 전후 마지막 쇼핑.'],
+      ['호텔 복귀','相鉄フレッサイン札幌すすきの','소테츠 후렛사 인 삿포로 스스키노','숙소','쇼핑 짐 정리 후 다음 날 귀국 준비.']
+    ]
+  };
+  const optionalChange=(id,fields)=>{const at=places.findIndex(x=>x.id===id);if(at>=0)Object.assign(places[at],fields);};
+  optionalChange('rokkatei',{
+    day:3,rating:'DAY 3 · 홋카이도 신궁 경내',
+    desc:'홋카이도 과자 브랜드 롯카테이의 신궁차야점. 신궁 안에서 구운 팥소 떡 한간사마(判官さま)를 먹으며 잠깐 쉬는 곳.',
+    recommend:'10:20경 신궁 참배 직후 들러 15~20분 휴식하고 홋카이도 대학으로 이동.',
+    menu:'한간사마(判官さま) · 과자 · 따뜻한 차'
+  });
+  optionalChange('kineya',{recommend:'12:30경 홋카이도 대학 은행나무길 산책 후 아피아에서 우동 점심 · 이후 미츠코시 GU 쇼핑'});
+  for(const [id,time] of [['gu-mitsukoshi','13:30'],['standard-moyuk','14:30'],['daiso-tanukikoji2','15:15']]){
+    const place=places.find(x=>x.id===id);
+    if(place)place.recommend=time+' 전후 방문. 오전에는 신궁과 홋카이도 대학을 둘러보고 오후에 쇼핑해요.';
+  }
+  const addChoicePlace=(p)=>{const at=places.findIndex(x=>x.id===p.id);if(at>=0)places[at]=p;else places.push(p);};
+  addChoicePlace({
+    id:'hokudai-ginkgo',day:3,type:'관광',name:'홋카이도 대학 은행나무길',
+    jp:'北海道大学 イチョウ並木',pron:'홋카이도 다이가쿠 이초나미키',
+    image:'./assets/day3-sapporo.jpg',rating:'DAY 3 · 캠퍼스 산책',
+    hours:'일반 방문 시 보행 가능한 구역 산책',budget:'무료',
+    location:'삿포로 기타구 · 홋카이도 대학 북13조문 부근',
+    desc:'북13조문에서 약 380m 이어지는 은행나무길과 캠퍼스. 첫째에게 일본 대학의 분위기를 보여주고 가족사진도 남겨요. 단풍 시기는 매년 날씨에 따라 달라요.',
+    recommend:'11:25~12:05 대학 산책 후 삿포로역 아피아로 이동해 우동 점심. 학생들의 수업·연구 공간 출입은 피해주세요.',
+    map:'https://www.google.com/maps/search/?api=1&query=Hokkaido+University+Ginkgo+Avenue+Kita13jo'
+  });
+  addChoicePlace({
+    id:'nikka-sign',day:1,type:'관광',name:'스스키노 닛카 간판 네온 야경 (선택)',
+    jp:'すすきの交差点 ニッカウヰスキー看板',pron:'스스키노 코사텐 닛카 칸반',
+    image:'./assets/day3-sapporo.jpg',rating:'DAY 1 · 가벼운 밤 산책',hours:'밤거리 야경',
+    budget:'무료',location:'스스키노 교차로 · 남4조 서3초메',
+    desc:'숙소 가까이에서 즐길 수 있는 삿포로 대표 네온 간판 포토 스팟. 첫날 피곤하면 생략.',
+    recommend:'20:15경 10~15분만 사진 찍고 호텔에서 쉬세요. 오타루 운하의 가스등 야경이 첫날 메인입니다.',
+    map:'https://www.google.com/maps/search/?api=1&query=Nikka+Whisky+Sign+Susukino+Sapporo'
+  });
+  addChoicePlace({
+    id:'noria',day:3,type:'관광',name:'노르베사 노리아 옥상 관람차 (선택)',
+    jp:'ノルベサ 観覧車ノリア',pron:'노르베사 칸란샤 노리아',
+    image:'./assets/day3-sapporo.jpg',rating:'DAY 3 · 선택 야경',
+    hours:'목요일 11:00~23:00 · 마지막 접수 22:50',
+    budget:'성인 ¥1,000 × 2, 초중학생 ¥500 × 2 = 가족 ¥3,000',
+    location:'삿포로 중앙구 남3조 서5초메 1-1 · 노르베사 7층',
+    desc:'신라테이 와규 식당 인근 옥상 관람차. 지상 약 78m에서 한 바퀴 10분간 삿포로 야경을 즐기며 4명이 같은 곤돌라에 탈 수 있어요.',
+    recommend:'20:15 전후 탑승 후 20:45 돈키호테로. 강풍·대기·피로를 고려해 선택 방문하세요.',
+    map:'https://www.google.com/maps/search/?api=1&query=Norbesa+nORIA+Ferris+Wheel+Sapporo'
+  });
+
   // Initialize the shared budget once; keep expense history and later manual adjustments.
   try{
     if(localStorage.getItem('sapporo-funding-20261019-v1')!=='1'){

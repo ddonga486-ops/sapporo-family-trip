@@ -423,6 +423,83 @@
     map:'https://www.google.com/maps/search/?api=1&query=Norbesa+nORIA+Ferris+Wheel+Sapporo'
   });
 
+
+  // Day 3 final night: no ferris wheel for a family member who has severe fear of heights.
+  // Keep full shopping, then leave bags at the hotel before a short street-level walk.
+  const nightDay3=d(3);
+  if(nightDay3){
+    nightDay3.subtitle='신궁 · 홋카이도 대학 · 시내 쇼핑 · 와규 · 호텔 짐보관 · 네온거리 · 편의점';
+    nightDay3.events=nightDay3.events.filter(e=>e.place!=='noria'&&
+      e.title!=='[선택] 노르베사 노리아 관람차 야경');
+    const donki=nightDay3.events.find(e=>e.place==='donki-tanukikoji');
+    if(donki)Object.assign(donki,{
+      time:'20:45',title:'MEGA 돈키호테 쇼핑',
+      desc:'신라테이 와규 식사 후 마지막 쇼핑 · 짐이 많으면 바로 호텔로 이동',
+      route:'last-night-shops'
+    });
+    const hotelReturn=nightDay3.events.find(e=>e.title==='호텔 복귀');
+    if(hotelReturn)Object.assign(hotelReturn,{
+      time:'22:20',title:'호텔 최종 복귀',
+      desc:'편의점 간식 먹으며 쉬고 내일 귀국 준비 · 첫째와 둘째도 편히 쉴 수 있도록 무리하지 않기'
+    });
+    nightDay3.events.push(
+      {time:'21:30',icon:'🏨',title:'호텔에 쇼핑 짐 내려놓기',
+        desc:'소테츠 프레사 인 삿포로 스스키노에 들러 돈키호테 등 쇼핑 짐을 객실에 놓고 가볍게 다시 출발\n호텔 주소: 南5条西2丁目6-1',route:'last-night-shops'},
+      {time:'21:45',icon:'🌃',title:'스스키노 네온거리 · 닛카 간판 사진',
+        desc:'호텔에서 도보 약 5~7분 예상 · 남4조 서3초메 스스키노 교차로\n지상에서 가족사진 10~15분 · 관람차 없는 무료 야경',
+        place:'nikka-sign',route:'hotel-neon-conbini'},
+      {time:'22:00',icon:'🏪',title:'패밀리마트 스스키노점 · 편의점 간식',
+        desc:'南5条西3丁目11-1 · 24시간 영업\n일본 편의점 디저트·과자·음료 구입 후 바로 호텔 복귀',
+        place:'famima-susukino',route:'hotel-neon-conbini'}
+    );
+    sort(nightDay3);
+  }
+  delete routes['noria-donki'];
+  routes['last-night-shops']={
+    title:'신라테이 → 돈키호테 → 호텔에 짐 두기',tag:'DAY 3 · 쇼핑 후 짐 정리',
+    time:'19:00 와규 → 20:45 돈키호테 → 21:30 호텔',fare:'도보',
+    map:'https://www.google.com/maps/dir/?api=1&origin=Tokujyu+Shinratei+Sapporo&destination=Sotetsu+Fresa+Inn+Sapporo+Susukino&waypoints=MEGA+Don+Quijote+Sapporo+Tanukikoji&travelmode=walking',
+    tip:'노르베사 관람차는 일정에서 완전히 삭제했어요. 돈키호테 쇼핑 후 먼저 호텔 객실에 쇼핑 짐을 내려놓고 네온거리 산책을 시작해요.',
+    steps:[
+      ['신라테이 와규 저녁','徳寿 しんら亭','토쿠주 신라테이','시라오이 와규 식당','19시 전후 가족 저녁 식사.'],
+      ['MEGA 돈키호테 쇼핑','MEGAドン・キホーテ札幌狸小路本店','메가 돈키호테 삿포로 다누키코지','돈키호테','20:45 전후 간식·기념품 쇼핑.'],
+      ['호텔에 쇼핑 짐 놓기','相鉄フレッサイン 札幌すすきの','소테츠 후렛사 인 삿포로 스스키노','숙소','21:30 전후 객실에 쇼핑 짐을 내려놓고 작은 가방으로 다시 출발.']
+    ]
+  };
+  routes['hotel-neon-conbini']={
+    title:'호텔 → 스스키노 닛카 간판 → 패밀리마트 → 호텔',tag:'DAY 3 · 짐 없는 밤 산책',
+    time:'약 25~40분 여유롭게',fare:'무료 산책 · 간식값 별도',
+    map:'https://www.google.com/maps/dir/?api=1&origin=Sotetsu+Fresa+Inn+Sapporo+Susukino&destination=Sotetsu+Fresa+Inn+Sapporo+Susukino&waypoints=Nikka+Whisky+Sign+Susukino%7CFamilyMart+Sapporo+Susukino+Store&travelmode=walking',
+    tip:'숙소에서 닛카 간판까지 도보 약 5~7분 예상. 메인도로와 횡단보도를 이용해 아이들과 밝은 큰길 위주로 움직여요.',
+    steps:[
+      ['호텔에서 짐 내려놓기','相鉄フレッサイン 札幌すすきの','소테츠 후렛사 인 삿포로 스스키노','호텔','남5조 서2초메 6-1. 쇼핑 짐을 객실에 두고 가볍게 출발.'],
+      ['스스키노 닛카 간판','すすきの交差点 ニッカウヰスキー看板','스스키노 코사텐 닛카 칸반','스스키노 교차로','남4조 서3초메, 10~15분 가족사진 촬영.'],
+      ['패밀리마트 스스키노점','ファミリーマート 札幌すすきの店','파미리 마토 삿포로 스스키노텐','패밀리마트','남5조 서3초메 11-1, 24시간. 디저트·주먹밥·음료 구입.'],
+      ['숙소 복귀','相鉄フレッサイン 札幌すすきの','소테츠 후렛사 인 삿포로 스스키노','호텔','구입한 간식을 들고 귀가해 편하게 휴식.']
+    ]
+  };
+  const wheelPos=places.findIndex(p=>p.id==='noria');
+  if(wheelPos>=0)places.splice(wheelPos,1);
+  const nightSign=places.find(p=>p.id==='nikka-sign');
+  if(nightSign)Object.assign(nightSign,{
+    day:3,rating:'DAY 3 · 호텔 짐 내려놓고 네온거리',
+    desc:'호텔에서 도보 약 5~7분 거리로 예상되는 스스키노 교차로의 대표 네온 사진 명소. 높은 곳에 오르지 않고 거리에서 사진을 찍어요.',
+    recommend:'돈키호테 쇼핑 후 호텔에 짐을 두고 21:45경 가족사진 → 편의점 간식 → 호텔.'
+  });
+  const fam={
+    id:'famima-susukino',day:3,type:'쇼핑',name:'패밀리마트 삿포로 스스키노점',
+    jp:'ファミリーマート 札幌すすきの店',pron:'파미리 마토 삿포로 스스키노텐',
+    image:'./assets/day3-sapporo.jpg',rating:'DAY 3 · 마지막 편의점 간식',hours:'24시간',
+    budget:'구매액별',location:'삿포로 남5조 서3초메 11-1',
+    desc:'네온 간판 구경을 마치고 호텔로 돌아가는 길에 들를 수 있는 편의점. 과자·아이스크림·음료·가벼운 야식 구입.',
+    recommend:'22시 전후 쇼핑, 객실로 돌아가 가족끼리 간식을 즐기며 여행을 마무리해요.',
+    map:'https://www.google.com/maps/search/?api=1&query=FamilyMart+Sapporo+Susukino+3-11-1+Minami+5'
+  };
+  const famAt=places.findIndex(p=>p.id===fam.id);
+  if(famAt>=0)places[famAt]=fam;else places.push(fam);
+  const donkiPlace=places.find(p=>p.id==='donki-tanukikoji');
+  if(donkiPlace)donkiPlace.recommend='20:45 전후 쇼핑 → 21:30 호텔에 짐 내려놓기 → 스스키노 닛카 간판·패밀리마트 야간 산책.';
+
   // Initialize the shared budget once; keep expense history and later manual adjustments.
   try{
     if(localStorage.getItem('sapporo-funding-20261019-v1')!=='1'){

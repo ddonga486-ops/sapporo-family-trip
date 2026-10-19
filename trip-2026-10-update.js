@@ -128,6 +128,147 @@
     map:'https://www.google.com/maps/search/?api=1&query=%E5%BE%B3%E5%AF%BF+%E3%81%97%E3%82%93%E3%82%89%E4%BA%AD+%E6%9C%AD%E5%B9%8C'
   });
 
+
+  // Confirmed schedule 2026-10-19: DAY 2 observation deck at NIGHT,
+  // DAY 3 city-center shopping only; remove Ario and Beer Museum.
+  const day2Confirmed=d(2);
+  if(day2Confirmed){
+    day2Confirmed.subtitle='조잔케이 온천 · 스프카레 · TV타워 전망대 야경';
+    const f=day2Confirmed.events.find(e=>e.title==='후타미공원 · 현수교');
+    if(f)f.desc='후타미공원·현수교 단풍 · 10/21 삿포로 비 예보로 노면 미끄러우면 짧게 산책하거나 생략';
+    const onsen=day2Confirmed.events.find(e=>e.title==='유노하나 조잔케이덴');
+    if(onsen)onsen.desc='온천 약 3시간 · 비가 많이 오면 야외 산책 대신 온천 중심으로 휴식 · 16:05 가족 집합';
+    day2Confirmed.events=day2Confirmed.events.filter(e=>e.place!=='tv-tower'&&e.title!=='삿포로 TV타워 야경');
+    day2Confirmed.events.push({
+      time:'20:10',icon:'🌃',title:'삿포로 TV타워 전망대 입장 · 야경',
+      desc:'3층 매표소에서 입장권 구입 → 엘리베이터로 전망대 올라가 삿포로 야경 감상\n가족 4인 정가 ¥3,600(성인 2명 ¥2,400 + 초중학생 2명 ¥1,200) · 마지막 입장 21:50\n비가 와도 전망대는 실내지만, 짙은 구름·강풍으로 시야나 운영에 영향 가능',
+      place:'tv-tower',route:'suage-tv-tower'
+    });
+    const hotel=day2Confirmed.events.find(e=>e.title==='호텔 복귀');
+    if(hotel)Object.assign(hotel,{time:'21:05',desc:'TV타워 전망대에서 야경을 본 후 숙소로 돌아와 휴식 · 식당 대기 길면 시간 조정'});
+    sort(day2Confirmed);
+  }
+  const day3Confirmed=d(3);
+  if(day3Confirmed){
+    day3Confirmed.subtitle='신궁 · 우동 · GU · 스탠다드 프로덕츠 · 다이소 · 와규 · 돈키호테';
+    day3Confirmed.events=[
+      {time:'07:30',icon:'🍳',title:'호텔 조식',desc:'가벼운 쇼핑 가방과 접이식 장바구니 준비'},
+      {time:'08:45',icon:'🚇',title:'호텔 → 마루야마코엔역',desc:'도호선 → 오도리 환승 → 도자이선 → 마루야마코엔역',route:'hotel-shrine'},
+      {time:'09:20',icon:'⛩',title:'홋카이도 신궁',desc:'가족 단풍 산책 · 공원역에서 약 15분 도보',place:'hokkaido-jingu',route:'hotel-shrine'},
+      {time:'10:30',icon:'🍡',title:'롯카테이 신궁차야점',desc:'과자·따뜻한 음료로 휴식',place:'rokkatei'},
+      {time:'11:10',icon:'🚇',title:'신궁 → 삿포로역',desc:'마루야마코엔역 → 오도리역 환승 → 삿포로역 아피아 지하상가',route:'shrine-station'},
+      {time:'11:50',icon:'🍜',title:'키네야 아피아 · 우동 점심',desc:'JR 삿포로역 지하 아피아 B1F · 가족끼리 가벼운 우동 점심',place:'kineya'},
+      {time:'12:50',icon:'👕',title:'GU·유니클로 삿포로 미츠코시',desc:'미츠코시 본관 10층 의류 쇼핑',place:'gu-mitsukoshi',route:'station-shops'},
+      {time:'13:50',icon:'🛍',title:'Standard Products moyuk SAPPORO',desc:'moyuk SAPPORO 2층 생활잡화 구경',place:'standard-moyuk',route:'station-shops'},
+      {time:'14:40',icon:'🛒',title:'다이소 다누키코지 2초메점',desc:'금시관 빌딩 6층 대형 다이소 · 쇼핑',place:'daiso-tanukikoji2',route:'station-shops'},
+      {time:'15:30',icon:'☕',title:'카페 휴식 · 자유 쇼핑',desc:'다누키코지·오도리 주변에서 쉬기 · 쇼핑짐 많으면 호텔에 잠깐 놓고 나와도 좋아요'},
+      {time:'19:00',icon:'🥩',title:'토쿠주 신라테이 · 와규 야키니쿠',desc:'가족 4인 마지막 밤 특별 저녁 · 총예산 최대 ¥20,000 · 예약 확정 여부 별도 확인',place:'shinratei',route:'evening-donki'},
+      {time:'20:30',icon:'🛍',title:'MEGA 돈키호테 다누키코지',desc:'와규 저녁 이후 마지막 쇼핑 · 24시간 영업',place:'donki-tanukikoji',route:'evening-donki'},
+      {time:'21:30',icon:'🏨',title:'호텔 복귀',desc:'내일 귀국을 위해 짐 정리'}
+    ];
+    sort(day3Confirmed);
+  }
+  // Remove outdated day-3 remote transport/beer museum routes from all screens.
+  delete routes['sapporo-beer'];
+  delete routes['museum-odori'];
+  delete routes['ario-odori'];
+  routes['suage-tv-tower']={
+    title:'Suage+ 저녁 → TV타워 전망대 입장',tag:'DAY 2 · 실내 야경',
+    time:'20:10 목표 (예약 없는 저녁 식사로 변동 가능)',fare:'전망대 가족 입장료 ¥3,600',
+    map:'https://www.google.com/maps/dir/?api=1&origin=Soup+Curry+Suage+Sapporo&destination=Sapporo+TV+Tower&travelmode=walking',
+    tip:'TV타워 3층에서 입장권을 구입하고 엘리베이터로 실내 전망대에 올라갑니다. 21:50 최종 입장. 비가 세거나 시야가 나쁘면 현장에서 결정하세요.',
+    steps:[
+      ['Suage+ 스프카레 식사','スープカレー Suage+','스푸 카레 스아게 푸라스','스프카레 식당','식사 대기시간에 따라 출발 시각 변경.'],
+      ['TV타워로 이동','さっぽろテレビ塔','삿포로 테레비토','삿포로 TV타워','오도리공원 동쪽의 TV타워까지 이동.'],
+      ['3층 전망대 티켓 구매','展望台 チケット売場','텐보다이 치켓토 우리바','전망대 티켓 매표소','성인 ¥1,200×2 · 초중학생 ¥600×2 = 총 ¥3,600.'],
+      ['엘리베이터로 전망대','展望台','텐보다이','실내 전망대','삿포로 중심부의 야경 감상. 비가 오면 시야 확인.'],
+      ['숙소 복귀','豊水すすきの','호스이스스키노','호스이스스키노','21시 전후 호텔 복귀, 휴식.']
+    ]
+  };
+  routes['shrine-station']={
+    title:'홋카이도 신궁 → 삿포로역 우동',tag:'DAY 3 · 점심',
+    time:'약 35~50분(도보·환승 포함)',fare:'지하철',
+    map:'https://www.google.com/maps/dir/?api=1&origin=Hokkaido+Jingu&destination=Kineya+Sapporo+Apia&travelmode=transit',
+    tip:'원하는 교통편을 Google 지도에서 확인하세요.',
+    steps:[
+      ['마루야마코엔역 이동','円山公園駅','마루야마코엔에키','마루야마공원역','신궁에서 지하철역으로 이동.'],
+      ['오도리역 환승','大通駅','오도리에키','오도리역','도자이선에서 난보쿠선 삿포로역 방면 환승.'],
+      ['삿포로역 → 아피아','札幌アピア','삿포로 아피아','삿포로 아피아 지하상가','11:50경 키네야에서 우동 점심.']
+    ]
+  };
+  routes['station-shops']={
+    title:'삿포로역 → GU → Standard Products → 다이소',tag:'DAY 3 · 시내 쇼핑',
+    time:'점심 이후 12:50~15:30',fare:'지하철 또는 지하보행 + 도보',
+    map:'https://www.google.com/maps/dir/?api=1&origin=Kineya+Sapporo+Apia&destination=DAISO+Tanukikoji+2chome+Sapporo&waypoints=GU+Sapporo+Mitsukoshi%7CStandard+Products+moyuk+Sapporo&travelmode=walking',
+    tip:'오도리까지 지하철을 타거나 지하보행공간으로 이동해 GU→스탠다드 프로덕츠→다이소 순서로 봐요.',
+    steps:[
+      ['삿포로역에서 오도리로','大通','오도리','오도리역 주변','도보 또는 지하철 1정거장.'],
+      ['미츠코시 GU','札幌三越10階','삿포로 미츠코시 쥿카이','미츠코시 10층','12:50 전후 GU·유니클로.'],
+      ['모유쿠 스탠다드 프로덕츠','モユクサッポロ 2F','모유쿠 삿포로 니카이','moyuk 2층','13:50 생활잡화 쇼핑.'],
+      ['다누키코지 다이소','ダイソー 狸小路2丁目店','다이소 다누키코지 니초메텐','다이소','14:40 대형점 방문.']
+    ]
+  };
+  routes['evening-donki']={
+    title:'신라테이 와규 저녁 → 돈키호테',tag:'DAY 3 · 마지막 밤',
+    time:'19:00~21:30',fare:'도보',
+    map:'https://www.google.com/maps/dir/?api=1&origin=Tokujyu+Shinratei+Sapporo&destination=MEGA+Don+Quijote+Sapporo+Tanukikoji&travelmode=walking',
+    tip:'TV타워 실내 야경은 전날 DAY 2에 관람하므로 DAY 3는 식사 후 돈키호테만 갑니다.',
+    steps:[
+      ['신라테이 저녁','徳寿 しんら亭','토쿠주 신라테이','신라테이','19:00 와규 야키니쿠. 예약은 별도 확인.'],
+      ['돈키호테 쇼핑','MEGAドン・キホーテ札幌狸小路本店','메가 돈키호테 삿포로 다누키코지 혼텐','돈키호테','20:30 전후 기념품과 간식 쇼핑.'],
+      ['호텔 귀환','相鉄フレッサイン札幌すすきの','소테츠 후렛사 인 삿포로 스스키노','호텔','짐 정리.']
+    ]
+  };
+  for(const id of ['beer-museum','beer-garden']){
+    const at=places.findIndex(x=>x.id===id);if(at>=0)places.splice(at,1);
+  }
+  change('tv-tower',{
+    day:2,rating:'DAY 2 · 전망대 야경',hours:'09:00~22:00 (마지막 입장 21:50)',
+    budget:'가족 4인 총 ¥3,600 (성인 2 + 초중학생 2)',
+    desc:'10월 21일 수요일 스프카레 저녁 후 3층 매표소에서 전망대 입장권을 사고 올라가 삿포로 야경을 감상해요. 외부 사진만 찍는 일정이 아니에요.',
+    recommend:'20:10~20:45 전망대에서 야경 감상. 비가 심하거나 전망대 시야가 흐리면 입장 전 확인하세요.'
+  });
+  change('suage',{recommend:'DAY 2 온천 후 스프카레 저녁. 대기시간을 보고 20:10 TV타워 전망대 입장을 이어갑니다.'});
+  change('shinratei',{recommend:'DAY 3 19시 와규 야키니쿠 후 20:30 MEGA 돈키호테. TV타워 전망대는 DAY 2에 방문.'});
+  change('kineya',{recommend:'DAY 3 11:50 우동 점심 후 GU → Standard Products → 다이소로 이동.'});
+  const addShop=p=>{const at=places.findIndex(x=>x.id===p.id);if(at>=0)places[at]=p;else places.push(p);};
+  addShop({
+    id:'gu-mitsukoshi',day:3,type:'쇼핑',name:'GU·유니클로 삿포로 미츠코시',
+    jp:'ジーユー 札幌三越店',pron:'지유 삿포로 미츠코시텐',
+    image:'./assets/day3-sapporo.jpg',rating:'DAY 3 · 옷 쇼핑',hours:'10:00~20:00',
+    budget:'구매액별',location:'삿포로 미츠코시 본관 10층',
+    desc:'오도리에서 가족 의류 쇼핑. GU·유니클로를 한곳에서 둘러볼 수 있어요.',
+    recommend:'12:50~13:45 GU 방문 다음 moyuk으로 이동.',
+    map:'https://www.google.com/maps/search/?api=1&query=GU+Sapporo+Mitsukoshi'
+  });
+  addShop({
+    id:'standard-moyuk',day:3,type:'쇼핑',name:'Standard Products moyuk SAPPORO',
+    jp:'スタンダードプロダクツ モユクサッポロ店',pron:'스탄다도 프로다쿠츠 모유쿠 삿포로텐',
+    image:'./assets/day3-sapporo.jpg',rating:'DAY 3 · 생활잡화',hours:'10:00~20:00',
+    budget:'구매액별',location:'moyuk SAPPORO 2층',
+    desc:'다이소 계열 디자인 생활용품 브랜드. 소품·주방용품 쇼핑.',
+    recommend:'13:50 전후 방문, 이후 도보로 다누키코지 대형 다이소로.',
+    map:'https://www.google.com/maps/search/?api=1&query=Standard+Products+moyuk+Sapporo'
+  });
+  addShop({
+    id:'daiso-tanukikoji2',day:3,type:'쇼핑',name:'다이소 다누키코지 2초메점',
+    jp:'ダイソー 狸小路2丁目店',pron:'다이소 다누키코지 니초메텐',
+    image:'./assets/day3-sapporo.jpg',rating:'DAY 3 · 대형 다이소',hours:'10:00~21:00',
+    budget:'구매액별',location:'금시관 빌딩 6층',
+    desc:'다누키코지 대형 다이소. 문구·생활잡화·기념품 쇼핑.',
+    recommend:'14:40~15:25 쇼핑 후 카페 또는 호텔에서 여유 있게 쉬기.',
+    map:'https://www.google.com/maps/search/?api=1&query=DAISO+Tanukikoji+2chome+Sapporo'
+  });
+  addShop({
+    id:'donki-tanukikoji',day:3,type:'쇼핑',name:'MEGA 돈키호테 삿포로 다누키코지 본점',
+    jp:'MEGAドン・キホーテ札幌狸小路本店',pron:'메가 돈키호테 삿포로 다누키코지 혼텐',
+    image:'./assets/day3-sapporo.jpg',rating:'DAY 3 · 야간 쇼핑',hours:'24시간',
+    budget:'구매액별',location:'삿포로 다누키코지',
+    desc:'와규 야키니쿠 저녁 식사 후 마지막으로 들를 쇼핑 장소.',
+    recommend:'20:30 전후 쇼핑 후 호텔 복귀.',
+    map:'https://www.google.com/maps/search/?api=1&query=MEGA+Don+Quijote+Sapporo+Tanukikoji'
+  });
+
   // Initialize the shared budget once; keep expense history and later manual adjustments.
   try{
     if(localStorage.getItem('sapporo-funding-20261019-v1')!=='1'){

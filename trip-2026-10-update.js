@@ -8,8 +8,8 @@
   const sort=day=>day.events.sort((a,b)=>a.time.localeCompare(b.time));
   const one=d(1);
   if(one){
-    one.subtitle='오타루 · 잔기 점심 · 운하 노을 · 규카츠 저녁';
-    edit(one,'나루토 본점 점심',{desc:'첫째가 먹고 싶어 한 잔기(홋카이도식 가라아게)와 닭튀김 · 가족 취향에 따라 초밥도 선택\n포장하지 않고 매장에서 따뜻하게 먹기'});
+    one.subtitle='오타루 · 잔기·초밥 점심 · 운하 노을 · 규카츠 저녁';
+    edit(one,'나루토 본점 점심',{desc:'첫째가 먹고 싶어 한 잔기(홋카이도식 가라아게)와 닭튀김 · 닭 반마리·초밥 7개 세트(¥2,980)도 선택\n포장하지 않고 매장에서 따뜻하게 먹기'});
     one.events=one.events.filter(e=>!['오타루 → 삿포로','호텔 체크인 · 캐리어 수령','스프카레 Suage+'].includes(e.title));
     one.events.push(
       {time:'17:25',icon:'🥩',title:'와규 쿠로사와 역앞점 · 규카츠 저녁',desc:'둘째가 기다린 규카츠 · 일반 규카츠 세트 ¥2,640부터\nJR 오타루역 도보 약 4분 · 예약 여부 별도 확인',place:'kurosawa-ekimae'},
@@ -19,15 +19,18 @@
   }
   const two=d(2);
   if(two){
-    two.subtitle='조잔케이 단풍 · 온천 3시간 · 저녁 후 휴식';
+    two.subtitle='조잔케이 단풍 · 온천 3시간 · 스프카레 · 휴식';
     two.events=two.events.filter(e=>e.title!=='삿포로 TV타워 야경');
-    edit(two,'호텔 복귀',{time:'19:40',desc:'온천 후 호텔에서 휴식 · TV타워는 DAY 3로 이동'});
+    const dinner=two.events.find(e=>e.place==='hanamaru');
+    if(dinner)Object.assign(dinner,{time:'18:20',icon:'🍛',title:'Suage+ 스프카레 저녁',desc:'닭다리·야채 스프카레 · 온천 후 스스키노에서 식사\n현금 또는 PayPay만 가능(신용/체크카드 불가) · 예약 불가 · 대기시간 유의',place:'suage'});
+    edit(two,'호텔 복귀',{time:'20:00',desc:'스프카레를 먹고 숙소에서 휴식 · 대기가 길면 변동\nTV타워는 DAY 3에 방문'});
     sort(two);
   }
   const three=d(3);
   if(three){
     three.subtitle='신궁 · 쇼핑 · 맥주박물관 · TV타워 · 와규 저녁';
     edit(three,'188번 버스 → 비어가든',{title:'188번 버스 → 아리오·맥주박물관',desc:'삿포로역 북쪽출구 2번 승강장 · 출발 전 현지 시간표 확인'});
+    edit(three,'돈카츠 와코',{title:'키네야 아피아 · 우동 점심',desc:'삿포로역 남쪽 지하 아피아 B1 우동집 · 유부/튀김/기본 우동\n4인 예상 ¥3,500~¥5,000 · 저녁 와규를 위해 점심은 가볍게',place:'kineya'});
     edit(three,'삿포로 맥주박물관',{desc:'남편을 위한 맥주박물관 자유견학 · 굿즈 · 시음 선택\n관람 뒤 시내로 돌아와 마지막 밤 즐기기'});
     three.events=three.events.filter(e=>!['삿포로 비어가든','MEGA 돈키호테','호텔 귀환'].includes(e.title));
     three.events.push(
@@ -72,12 +75,36 @@
   };
   const change=(id,fields)=>{const p=places.find(x=>x.id===id);if(p)Object.assign(p,fields);};
   change('naruto',{
-    desc:'첫째가 일본에서 한 번 먹고 싶어 한 잔기(홋카이도식 가라아게)를 매장에서 갓 튀긴 상태로 먹는 첫날 점심.',menu:'잔기 · 닭 반마리 튀김 · 초밥',
+    desc:'첫째가 원하는 잔기(홋카이도식 가라아게)와 초밥을 한곳에서 맛볼 수 있는 첫날 점심. 공식 메뉴에 닭 반마리 튀김+초밥 7개 세트가 있습니다.',menu:'닭 반마리·초밥 7개 세트 ¥2,980 · 잔기덮밥 ¥950',
     recommend:'포장 없이 매장에서 점심으로 먹어요. 이후 사카이마치·오르골당·르타오 → 운하 노을로 이동합니다.'});
   change('sakaimachi',{recommend:'점심 뒤 오르골당과 르타오를 둘러보고 오후 4시 20분 전후 운하로 향해요.'});
   change('music-box',{recommend:'르타오와 묶어 관람하고 운하 노을을 본 뒤 오타루역 근처에서 저녁 식사해요.'});
   change('letao',{recommend:'오르골당 뒤 디저트 휴식을 하고 16:20 전후 운하에 도착하도록 이동해요.'});
-  change('suage',{day:2,rating:'DAY 2 · 저녁 대안',recommend:'온천으로 피곤할 때 2일차 저녁에 먹을 수 있는 스스키노 식사 대안입니다.'});
+  change('suage',{
+    day:2,rating:'DAY 2 · 스프카레 저녁',hours:'수요일 11:30~21:00 (L.O. 20:30)',
+    budget:'1인 약 ¥1,500~¥2,200',location:'스스키노 남4조 서5초메 · 도지마쓰빌딩 2F',
+    desc:'조잔케이 온천을 마치고 스스키노로 돌아와 먹는 홋카이도 스프카레. Suage+는 현금 또는 PayPay만 받고 신용/체크카드는 사용 불가입니다.',
+    menu:'닭다리 스프카레 · 야채 스프카레 · 돼지고기 카쿠니 스프카레',
+    recommend:'18:20 전후 도착 목표. 사전 좌석 예약 불가, 줄이 길 수 있습니다. 현금 약 ¥8,000을 준비해 두는 게 좋아요.'
+  });
+  change('hanamaru',{rating:'DAY 2 · 저녁 대체 후보',recommend:'이번 일정의 저녁은 Suage+ 스프카레로 변경되었어요. 너무 긴 대기나 취향이 안 맞을 때 선택할 수 있는 회전초밥 대안입니다.'});
+  change('wako',{rating:'DAY 3 · 점심 대체 후보',recommend:'이번 일정의 3일차 점심은 키네야 우동으로 변경되었어요. 돈카츠는 계획에 없는 대체 식당입니다.'});
+  if(routes['jozankei-return']){
+    routes['jozankei-return'].tip='온천은 16:05에 마치고 버스로 스스키노에 돌아와 Suage+ 스프카레를 먹고 호텔에서 쉬어요.';
+    routes['jozankei-return'].steps=routes['jozankei-return'].steps.map(s=>
+      s[0]==='스스키노 도착'?[s[0],s[1],s[2],s[3],'18:05 전후 스스키노 도착 → Suage+ 스프카레로 이동. 대기시간에 따라 식사시간 변동.']:s
+    );
+  }
+  places.push({
+    id:'kineya',day:3,type:'식당',name:'키네야 삿포로 아피아점 · 우동',jp:'自家製麺 杵屋 札幌アピア店',pron:'지카세이멘 키네야 삿포로 아피아텐',
+    image:'./assets/day3-sapporo.jpg',rating:'DAY 3 · 우동 점심',
+    hours:'11:00~21:30 (L.O. 21:00)',budget:'우동 ¥780~¥1,250 전후',
+    location:'삿포로역 남쪽 지하 아피아 · 조이풀워크 B1F',
+    desc:'삿포로역과 연결된 지하상가에서 가볍게 먹는 셋째 날 점심. 가족용 메뉴와 테이블 좌석이 있어 저녁 와규 식사 전에 부담이 적습니다.',
+    recommend:'12:30 전후 점심을 먹고 삿포로역 북쪽출구의 아리오·맥주박물관 이동 교통편을 확인해요.',
+    menu:'기본 우동 ¥780 · 유부 우동 ¥850 · 튀김 우동 ¥1,110',
+    map:'https://www.google.com/maps/search/?api=1&query=%E6%9D%B5%E5%B1%8B+%E6%9C%AD%E5%B9%8C%E3%82%A2%E3%83%94%E3%82%A2%E5%BA%97'
+  });
   change('beer-museum',{
     desc:'맥주박물관은 그대로 방문하되 징기스칸 식사는 생략하고 마지막 밤 와규 야키니쿠로 변경했어요.',
     recommend:'15시대 관람 → 오도리 TV타워 18시 → 신라테이 와규 저녁 19시.'});

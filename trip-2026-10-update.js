@@ -529,6 +529,50 @@
     if(university)Object.assign(university,{rating:'이번 여행 일정에서 제외',recommend:'10월 21일 현장 일정 변경으로 방문 생략. GU와 시내 쇼핑에 시간을 배정합니다.'});
   }
 
+  // 2026-10-21 decision: move wagyu dinner from shopping day to after Jozankei.
+  const shoppingDay=days.find(x=>x.day===2);
+  const onsenDay=days.find(x=>x.day===3);
+  if(shoppingDay&&onsenDay){
+    shoppingDay.events=shoppingDay.events.filter(e=>e.place!=='shinratei');
+    shoppingDay.subtitle='신궁 · GU · 트램 · Standard Products · 다이소 · 돈키호테 · 네온거리';
+    const streetcarPresent=shoppingDay.events.some(e=>e.title.includes('트램 순환'));
+    if(!streetcarPresent)shoppingDay.events.push({
+      time:'14:10',icon:'🚋',title:'삿포로 트램 한 바퀴 (선택)',
+      desc:'西4丁目(니시4초메) 출발 → 순환 약 55분 → 같은 정류장 하차 · 운행 종료편인지 탑승 전 확인',
+      route:'odori-tram-loop'
+    });
+    for(const [id,time] of [['standard-moyuk','15:15'],['daiso-tanukikoji2','16:10'],['donki-tanukikoji','17:00']]){
+      const e=shoppingDay.events.find(x=>x.place===id);
+      if(e)e.time=time;
+    }
+    const hotelBag=shoppingDay.events.find(e=>e.title.includes('쇼핑 짐 내려놓기'));
+    if(hotelBag)hotelBag.time='19:15';
+    shoppingDay.events.sort((a,b)=>a.time.localeCompare(b.time));
+    onsenDay.events=onsenDay.events.filter(e=>e.place!=='suage');
+    onsenDay.events.push({
+      time:'19:00',icon:'🥩',title:'토쿠주 신라테이 · 와규 야키니쿠 저녁',
+      desc:'조잔케이에서 일반버스·지하철로 복귀 후 가족 4인 와규 저녁 · 예약 여부 확인 필요, 귀가 버스 지연 시 시간 조정',
+      place:'shinratei'
+    });
+    const tv=onsenDay.events.find(e=>e.place==='tv-tower');
+    if(tv)Object.assign(tv,{time:'20:45',desc:'온천·버스 이동과 와규 저녁 후 여유가 있을 때만 선택 방문 · 마지막 입장 확인'});
+    onsenDay.subtitle='조잔케이 눈 구경 · 신사 · 유노하나 온천 · 와규 저녁';
+    onsenDay.events.sort((a,b)=>a.time.localeCompare(b.time));
+    const wagyu=places.find(p=>p.id==='shinratei');
+    if(wagyu)Object.assign(wagyu,{day:3,rating:'DAY 3 · 조잔케이 후 와규 저녁',
+      recommend:'10월 22일 온천 후 삿포로 복귀하여 19시경 저녁. 버스 시간 및 좌석 예약 여부에 따라 유동 조정.'});
+    const soup=places.find(p=>p.id==='suage');
+    if(soup)Object.assign(soup,{rating:'일정 외 · 대체 식당',recommend:'10월 22일 저녁은 와규로 변경. 스프카레는 원할 때만 대안으로 이용.'});
+    routes['odori-tram-loop']={
+      title:'오도리 니시4초메 → 시영 트램 한 바퀴',tag:'DAY 2 · 선택 관광',
+      time:'약 50~60분',fare:'탑승 시 현장 요금 확인',
+      map:'https://www.google.com/maps/search/?api=1&query=Nishi+4+Chome+Streetcar+Stop+Sapporo',
+      tip:'내선 또는 외선 순환 어느 쪽도 한 바퀴 뒤 西4丁目으로 돌아옵니다. 중간 운행 종료 여부는 탑승 전 확인.',
+      steps:[['니시4초메 정류장','西4丁目','니시욘초메','트램 정류장','오도리역 인근'],
+      ['순환 노선 탑승','内回り / 外回り','우치마와리 / 소토마와리','내선 / 외선','차량 목적지·운행 종료 여부 확인'],
+      ['니시4초메 복귀','西4丁目','니시욘초메','하차','moyuk 스탠다드 프로덕츠로 도보 이동']]
+    };
+  }
   // Initialize the shared budget once; keep expense history and later manual adjustments.
   try{
     if(localStorage.getItem('sapporo-funding-20261019-v1')!=='1'){

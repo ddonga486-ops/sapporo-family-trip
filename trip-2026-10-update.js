@@ -689,4 +689,42 @@
     if(typeof render==='function'&&document.querySelector('#app'))render();
   }
 
+
+  // 2026-10-22 confirmed on-site DAY 3 plan, overriding all earlier historical revisions.
+  const finalDay3=days.find(x=>x.day===3);
+  if(finalDay3){
+    finalDay3.title='조잔케이 관광 · 온천';
+    finalDay3.subtitle='첫눈·신사 → 카페 → 온천·식사 → 오도리 TV타워 → 저녁 → 파르페';
+    finalDay3.image='./assets/day2-jozankei.jpg';
+    finalDay3.events=[
+      {time:'08:30',icon:'🚇',title:'숙소 출발 · 마코마나이역 이동',desc:'스스키노역에서 지하철 난보쿠선 真駒内행 탑승 → 마코마나이역에서 조테츠 일반버스로 환승. 버스 시간·승강장 현지 확인',route:'hotel-jozankei'},
+      {time:'09:15',icon:'🚌',title:'조잔케이행 일반버스 탑승',desc:'마코마나이역에서 12J 등 定山渓 방면 일반버스 → 定山渓神社前 하차. 출발 시각은 현장 시간표 우선, 눈·강풍 시 지연 가능',route:'hotel-jozankei'},
+      {time:'10:15',icon:'⛩',title:'조잔케이 신사 · 단풍과 눈 구경',desc:'신사에서 짧게 참배하고 주변 단풍·눈 구경. 실제 적설 여부와 미끄러운 노면 확인 후 산책 조정',place:'jozankei-shrine'},
+      {time:'11:00',icon:'☕',title:'조잔케이 카페 · 커피와 디저트',desc:'엑스클러메이션 베이커리 등 현장 영업 중인 카페에서 따뜻하게 쉬기. 카페와 온천 사이 이동시간 확인',place:'exclamation-jozankei'},
+      {time:'12:15',icon:'♨️',title:'유노하나 조잔케이덴 · 온천 및 식사',desc:'가족 온천·점심·휴게실 휴식. 식사는 온천 시설 내에서 해결하고 귀가 버스에 맞춰 마무리',place:'yunohana'},
+      {time:'15:40',icon:'🚶',title:'온천 마무리 · 정류장 이동',desc:'옷 갈아입고 定山渓車庫前 등 마코마나이행 정류장 위치·승차 시각 현장 확인. 버스 도착 전 여유 있게 대기',route:'jozankei-return'},
+      {time:'16:00',icon:'🚌',title:'일반버스·지하철로 오도리 복귀',desc:'16시경 귀가 시작 목표 · 실제 버스는 16시대 운행편 확인. 조잔케이 → 마코마나이역 → 난보쿠선 오도리역. 갓파라이너 예약제 아님',route:'jozankei-return'},
+      {time:'17:50',icon:'🌃',title:'삿포로 TV타워 전망대 · 야경',desc:'오도리 복귀 후 전망대 입장 및 가족 야경 감상. 귀가 버스 지연·시야·피로도에 따라 입장 시각 변경',place:'tv-tower'},
+      {time:'19:00',icon:'🥩',title:'저녁 식사 · 와규 또는 스프카레',desc:'TV타워 관람 후 저녁. 와규 우선, 대기시간이 길면 스프카레 등으로 변경. 예약 확정 아님',place:'shinratei'},
+      {time:'20:15',icon:'🍨',title:'삿포로 시메파르페',desc:'저녁을 마친 뒤 스스키노·오도리 주변에서 파르페 디저트. 운영시간·대기열 현장 확인',place:'parfait-susukino'},
+      {time:'21:10',icon:'🏨',title:'숙소 복귀 · 개인 선택 구경',desc:'소테츠 프레사 인 삿포로 스스키노 복귀. 체력이 남으면 근처 산책·편의점·자유 쇼핑'}
+    ];
+    const ensurePlace=p=>{const at=places.findIndex(x=>x.id===p.id);if(at>=0)places[at]=p;else places.push(p);};
+    ensurePlace({id:'exclamation-jozankei',day:3,type:'카페',name:'엑스클러메이션 베이커리',jp:'エクスクラメーションベーカリー',pron:'에쿠스쿠라메숀 베카리',image:'./assets/day2-jozankei.jpg',rating:'DAY 3 · 조잔케이 카페',hours:'방문 전 당일 영업 확인',budget:'구매 메뉴에 따라',location:'조잔케이 온천마을',desc:'신사 눈 구경 후 따뜻한 음료·빵으로 휴식',recommend:'11시경 이용 후 유노하나 온천·식사 이동',map:'https://www.google.com/maps/search/?api=1&query=Exclamation+Bakery+Jozankei'});
+    ensurePlace({id:'parfait-susukino',day:3,type:'카페',name:'삿포로 시메파르페 · 현장 선택',jp:'札幌 シメパフェ',pron:'삿포로 시메파페',image:'./assets/day3-sapporo.jpg',rating:'DAY 3 · 저녁 디저트',hours:'방문 전 매장별 확인',budget:'메뉴별 상이',location:'스스키노·오도리 인근',desc:'저녁 식사 후 즐기는 삿포로의 마무리 파르페',recommend:'20시 전후 영업 중인 가까운 매장에서 선택',map:'https://www.google.com/maps/search/?api=1&query=Shime+Parfait+Susukino+Sapporo'});
+    const tower=places.find(x=>x.id==='tv-tower');
+    if(tower)Object.assign(tower,{day:3,rating:'DAY 3 · 오도리 전망대 야경',desc:'10월 22일 조잔케이에서 돌아온 뒤 TV타워 전망대 입장. 귀가 버스 지연과 시야를 보고 시간 조정',recommend:'오도리 도착 후 전망대부터 방문 → 저녁 → 시메파르페'});
+    const wagyu=places.find(x=>x.id==='shinratei');
+    if(wagyu)Object.assign(wagyu,{day:3,recommend:'DAY 3 TV타워 전망대 이후 19시경 저녁 선택. 현장 대기·예약 여부 확인'});
+    routes['hotel-jozankei']={
+      title:'스스키노 → 마코마나이 → 조잔케이 신사',tag:'DAY 3 · 지하철 + 일반버스',time:'08:30 숙소 출발 · 배차에 따라 도착 변경',fare:'지하철 + 조테츠 일반버스',map:'https://www.google.com/maps/dir/?api=1&origin=Susukino+Station+Sapporo&destination=Jozankei+Shrine&travelmode=transit',
+      tip:'숙소에서 08:30 출발. すすきの역 南北線 真駒内행 → 마코마나이역 → 定山渓神社前 방면 일반버스. 실제 평일 시간표 및 강풍·눈 운행을 반드시 현장 확인.',
+      steps:[['스스키노역','すすきの駅','스스키노에키','난보쿠선','真駒内행으로 이동'],['마코마나이역 환승','真駒内駅','마코마나이에키','버스터미널','조잔케이 방면 정류장 확인'],['일반버스','じょうてつバス','조테츠 바스','예약 불필요','定山渓神社前 하차 가능한 노선과 출발시각 확인'],['조잔케이 신사 앞 하차','定山渓神社前','조잔케이 진자마에','신사 입구','짧은 눈·단풍 산책']]};
+    routes['jozankei-return']={
+      title:'유노하나 → 마코마나이 → 오도리 TV타워',tag:'DAY 3 · 일반버스 귀가',time:'16시경 귀가 시작 · 실제 출발편 현장 확인',fare:'조테츠 일반버스 + 난보쿠선',map:'https://www.google.com/maps/dir/?api=1&origin=Yunohana+Jozankei&destination=Sapporo+TV+Tower&travelmode=transit',
+      tip:'16시 귀가 목표. 정류장별 평일 버스 시간표가 다르므로 현장 표시 확인. 마코마나이행 일반버스 → 난보쿠선 오도리역 → TV타워. 예약제 갓파라이너 사용 안 함.',
+      steps:[['유노하나 온천','湯の花 定山渓殿','유노하나 조잔케이덴','온천','15:40 전후 옷 갈아입고 나올 준비'],['정류장','定山渓車庫前','조잔케이 샤코마에','가까운 일반버스 정류장','마코마나이행 실제 승차 가능 정류장 확인'],['일반버스','真駒内駅行き','마코마나이에키 유키','마코마나이행','16시대 실제 배차에 맞춰 탑승'],['지하철 환승','南北線 大通駅','난보쿠센 오도리에키','오도리역','마코마나이역에서 삿포로 방면 열차'],['TV타워 전망대','さっぽろテレビ塔','삿포로 테레비토','오도리공원','전망대 야경 → 저녁 → 파르페']]};
+    if(typeof render==='function'&&document.querySelector('#app'))render();
+  }
+
 })();

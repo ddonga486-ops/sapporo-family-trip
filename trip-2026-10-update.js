@@ -542,4 +542,76 @@
     };
   }
   if(typeof render==='function' && document.querySelector('#app'))render();
+
+  // 2026-10-21 family change: city on Wednesday, Jozankei by regular bus Thursday.
+  // Do not touch cloud-synced places, saved expenses, favorites, or user notes.
+  const city=days.find(x=>x.day===2), valley=days.find(x=>x.day===3);
+  if(city&&valley){
+    const previousCityEvents=city.events, previousValleyEvents=valley.events;
+    city.events=previousValleyEvents;
+    valley.events=previousCityEvents;
+    city.title='삿포로 신궁 · 대학 · 쇼핑';
+    city.subtitle='홋카이도 신궁 · 대학 은행나무길 · 쇼핑 · 와규 · 네온거리';
+    city.image='./assets/day3-sapporo.jpg';
+    valley.title='조잔케이 첫눈 · 온천';
+    valley.subtitle='일반버스 환승 · 눈 구경 · 조잔케이 신사 · 유노하나 온천';
+    valley.image='./assets/day2-jozankei.jpg';
+    const changeEvent=(events,match,changes)=>{const e=events.find(match);if(e)Object.assign(e,changes);};
+    city.events=city.events.filter(e=>!e.title.includes('갓파라이너'));
+    valley.events=valley.events.filter(e=>!e.title.includes('갓파라이너')&&!e.title.includes('비 오는 날과 눈 오는 날'));
+    // Public bus timetable is subject to weather and final day-of confirmation.
+    valley.events=valley.events.filter(e=>!['호텔 → 갓파라이너 정류장','조잔케이 → 스스키노'].includes(e.title));
+    changeEvent(valley.events,e=>e.title==='호텔 조식',{time:'07:00',desc:'온천용 작은 가방 · 방한복 · 미끄럼 방지 신발 준비'});
+    valley.events.push(
+      {time:'07:45',icon:'🚇',title:'호텔 → 스스키노역 → 마코마나이역',desc:'난보쿠선 真駒内행 지하철 → 종점 하차 후 조테츠 일반버스 환승',route:'hotel-jozankei'},
+      {time:'08:51',icon:'🚌',title:'12번 계열 일반버스 탑승 (예정)',desc:'마코마나이역 → 定山渓神社前(조잔케이 신사 앞) 약 09:31 도착 예상\\n예약 불필요 · 평일 출발시간과 운행여부 아침에 재확인 · 좌석 보장 없음',route:'hotel-jozankei'},
+      {time:'16:20',icon:'🚶',title:'온천 마무리 · 일반버스 정류장 이동',desc:'버스 운행시간 현장 확인 후 차고 앞 또는 가까운 정류장으로 이동 · 출발 15분 전 도착',route:'jozankei-return'},
+      {time:'16:30',icon:'🚌',title:'일반버스로 귀가 (시간 미확정)',desc:'조잔케이 → 마코마나이역 12번 계열 일반버스 → 지하철 난보쿠선 → 스스키노\\n16:30~17:30대 출발편 중 현장 시간표 확인 후 탑승 · 예약제 17:06 갓파라이너와 혼동 금지',route:'jozankei-return'}
+    );
+    changeEvent(valley.events,e=>e.place==='jozankei-shrine',{time:'09:40',desc:'눈발 예보에 맞춰 조잔케이 신사 참배 · 눈이 쌓이거나 얼면 짧게 구경'});
+    changeEvent(valley.events,e=>e.place==='futami',{time:'10:30',desc:'눈 구경과 온천마을 산책 · 현수교는 우회로 개방·미끄럼 상태 확인 후 선택'});
+    changeEvent(valley.events,e=>e.place==='shokudo-ichi',{time:'12:00',desc:'점심식사 · 매장 운영과 대기상황 현장 확인'});
+    changeEvent(valley.events,e=>e.place==='yunohana',{time:'13:00',desc:'가족 온천·휴식 약 3시간 · 16시대 일반버스 시간표에 맞춰 마무리'});
+    changeEvent(valley.events,e=>e.place==='suage',{time:'18:30',desc:'시내 복귀 후 스프카레 저녁 · 버스 실제 도착 시각에 따라 조정'});
+    changeEvent(valley.events,e=>e.place==='tv-tower',{time:'20:10',desc:'체력과 시야가 괜찮을 때만 TV타워 전망대 선택 방문'});
+    for(const e of valley.events){if(e.title==='호텔 복귀'||e.title==='호텔 최종 복귀')e.time='21:10';}
+    city.events.sort((a,b)=>a.time.localeCompare(b.time));
+    valley.events.sort((a,b)=>a.time.localeCompare(b.time));
+    for(const p of places){if(p.day===2)p.day=3;else if(p.day===3)p.day=2;
+      if(p.rating)p.rating=p.rating.replace(/DAY 2/g,'DAY_TMP').replace(/DAY 3/g,'DAY 2').replace(/DAY_TMP/g,'DAY 3');
+    }
+    for(const [key,route] of Object.entries(routes)){
+      if(route.tag)route.tag=route.tag.replace(/DAY 2/g,'DAY_TMP').replace(/DAY 3/g,'DAY 2').replace(/DAY_TMP/g,'DAY 3');
+    }
+    routes['hotel-jozankei']={
+      title:'스스키노 → 마코마나이 → 조잔케이 신사',tag:'DAY 3 · 예약 없는 일반버스',
+      time:'08:51 출발 목표 · 약 09:31 도착 예상',fare:'지하철 + 조테츠 일반버스',
+      map:'https://www.google.com/maps/dir/?api=1&origin=Susukino+Station+Sapporo&destination=Jozankei+Shrine&travelmode=transit',
+      tip:'갓파라이너 오전편은 매진. 스스키노역에서 난보쿠선 真駒内행으로 종점 이동 → 조테츠 12J/12H 등 조잔케이 방향 일반버스. 08:51 평일 시각과 운행 상태는 출발 전 재확인하세요.',
+      steps:[
+        ['스스키노역 탑승','すすきの駅 南北線','스스키노에키 난보쿠센','지하철 난보쿠선','真駒内(마코마나이)행 탑승'],
+        ['마코마나이역 하차','真駒内駅','마코마나이에키','마코마나이역','남쪽 버스터미널의 조잔케이행 승강장과 실제 버스 표시 확인'],
+        ['조테츠 일반버스 탑승','じょうてつバス 12J / 12H','조테츠 바스','예약 없는 일반버스','08:51 목표 · 현지 평일 시간표·운행 여부 확인 · 만석일 때 다음 차'],
+        ['조잔케이 신사 앞 하차','定山渓神社前','조잔케이 진자마에','조잔케이 신사 앞','09:31 전후 예상 · 도착하면 눈 구경과 신사 산책']
+      ]
+    };
+    routes['jozankei-return']={
+      title:'조잔케이 → 마코마나이 → 스스키노',tag:'DAY 3 · 일반버스 귀가',
+      time:'16:30~17:30대 후보 · 정확한 출발시각 확인 필요',fare:'조테츠 일반버스 + 지하철',
+      map:'https://www.google.com/maps/dir/?api=1&origin=Jozankei+Onsen&destination=Susukino+Station+Sapporo&travelmode=transit',
+      tip:'예약제 갓파라이너 17:06편은 매진이므로 이용 불가. 일반버스 12J/12H 등 마코마나이역 방면 출발시간을 정류장 현장 안내에서 확인하고 15분 일찍 대기하세요.',
+      steps:[
+        ['온천 마무리','湯の花 定山渓殿','유노하나 조잔케이덴','유노하나 온천','16시대에 옷 갈아입고 나올 준비'],
+        ['일반버스 정류장 확인','定山渓車庫前','조잔케이 샤코마에','조잔케이 차고 앞','실제 12번 계열 버스 정차 정류장과 시간 확인'],
+        ['마코마나이행 일반버스','真駒内駅行き','마코마나이에키 유키','마코마나이역행','시간 미확정 · 일반버스 노선번호·방향 확인'],
+        ['지하철 난보쿠선 환승','南北線 すすきの方面','난보쿠센 스스키노 호멘','스스키노 방면','마코마나이역에서 지하철로 이동']
+      ]
+    };
+    // Preserve existing map routing, expenses, and checklist behavior; update stale transit entries only.
+    if(typeof checklistData!=='undefined'&&checklistData['여행 중']){
+      for(const c of checklistData['여행 중'])if(typeof c[1]==='string'&&c[1].includes('갓파라이너')){c[1]='조잔케이 일반버스 시간 확인';c[2]='10/22 마코마나이 환승·귀가편 현장 확인';}
+    }
+    if(typeof render==='function'&&document.querySelector('#app'))render();
+  }
+
 })();

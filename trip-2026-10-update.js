@@ -500,6 +500,35 @@
   const donkiPlace=places.find(p=>p.id==='donki-tanukikoji');
   if(donkiPlace)donkiPlace.recommend='20:45 전후 쇼핑 → 21:30 호텔에 짐 내려놓기 → 스스키노 닛카 간판·패밀리마트 야간 산책.';
 
+  // On-the-ground change on Oct 21: skip Hokkaido University and go from Hokkaido Shrine to GU.
+  const cityToday=days.find(x=>x.day===2);
+  if(cityToday){
+    cityToday.subtitle='홋카이도 신궁 · GU · 시내 쇼핑 · 와규 · 네온거리 (대학 생략)';
+    cityToday.events=cityToday.events.filter(e=>e.place!=='hokudai-ginkgo'&&!e.title.includes('홋카이도 대학')&&!e.title.includes('신궁 → 대학'));
+    const oldTransfer=cityToday.events.find(e=>e.title.includes('대학 →')||e.title.includes('신궁 → 삿포로역'));
+    if(oldTransfer)Object.assign(oldTransfer,{time:'11:45',icon:'🚇',title:'신궁 → 오도리역 · GU로 이동',desc:'마루야마코엔역에서 도자이선 신삿포로 방면 3정거장 → 오도리역 → 미츠코시 GU',route:'shrine-gu'});
+    else cityToday.events.push({time:'11:45',icon:'🚇',title:'신궁 → 오도리역 · GU로 이동',desc:'마루야마코엔역 → 도자이선 신삿포로 방면 3정거장 → 오도리역 → 미츠코시 GU',route:'shrine-gu'});
+    cityToday.events=cityToday.events.filter(e=>e.place!=='kineya');
+    const gu=cityToday.events.find(e=>e.place==='gu-mitsukoshi');
+    if(gu)Object.assign(gu,{time:'12:15',desc:'홋카이도 대학 생략 · 오도리역에서 미츠코시 GU로 바로 이동'});
+    cityToday.events.push({time:'13:15',icon:'🍜',title:'쇼핑 중 점심 · 현장 선택',desc:'GU 쇼핑 상황에 맞춰 오도리·다누키코지 인근 식당에서 점심'});
+    for(const [id,time] of [['standard-moyuk','14:15'],['daiso-tanukikoji2','15:00']]){
+      const e=cityToday.events.find(x=>x.place===id);if(e)e.time=time;
+    }
+    cityToday.events.sort((a,b)=>a.time.localeCompare(b.time));
+    routes['shrine-gu']={
+      title:'홋카이도 신궁 → 미츠코시 GU',tag:'DAY 2 · 대학 생략',time:'지하철 3정거장 + 도보',fare:'도자이선',
+      map:'https://www.google.com/maps/dir/?api=1&origin=Hokkaido+Jingu&destination=GU+Sapporo+Mitsukoshi&travelmode=transit',
+      tip:'円山公園역에서 新さっぽろ 방면 탑승 → 西18丁目 → 西11丁目 → 大通역 하차 후 삿포로 미츠코시로 이동.',
+      steps:[['마루야마코엔역','円山公園駅','마루야마코엔에키','도자이선 역','신궁에서 역으로 도보 이동'],
+      ['신삿포로 방면 탑승','新さっぽろ方面','신삿포로 호멘','도자이선','오도리까지 3정거장'],
+      ['오도리역 하차','大通駅','오도리에키','오도리역','미츠코시 방향 출구 및 지하 연결통로 확인'],
+      ['GU 쇼핑','札幌三越','삿포로 미츠코시','미츠코시','백화점 내 GU 위치 안내 확인']]
+    };
+    const university=places.find(x=>x.id==='hokudai-ginkgo');
+    if(university)Object.assign(university,{rating:'이번 여행 일정에서 제외',recommend:'10월 21일 현장 일정 변경으로 방문 생략. GU와 시내 쇼핑에 시간을 배정합니다.'});
+  }
+
   // Initialize the shared budget once; keep expense history and later manual adjustments.
   try{
     if(localStorage.getItem('sapporo-funding-20261019-v1')!=='1'){
@@ -542,35 +571,6 @@
     };
   }
   if(typeof render==='function' && document.querySelector('#app'))render();
-
-  // On-the-ground change on Oct 21: skip Hokkaido University and go from Hokkaido Shrine to GU.
-  const cityToday=days.find(x=>x.day===2);
-  if(cityToday){
-    cityToday.subtitle='홋카이도 신궁 · GU · 시내 쇼핑 · 와규 · 네온거리 (대학 생략)';
-    cityToday.events=cityToday.events.filter(e=>e.place!=='hokudai-ginkgo'&&!e.title.includes('홋카이도 대학')&&!e.title.includes('신궁 → 대학'));
-    const oldTransfer=cityToday.events.find(e=>e.title.includes('대학 →')||e.title.includes('신궁 → 삿포로역'));
-    if(oldTransfer)Object.assign(oldTransfer,{time:'11:45',icon:'🚇',title:'신궁 → 오도리역 · GU로 이동',desc:'마루야마코엔역에서 도자이선 신삿포로 방면 3정거장 → 오도리역 → 미츠코시 GU',route:'shrine-gu'});
-    else cityToday.events.push({time:'11:45',icon:'🚇',title:'신궁 → 오도리역 · GU로 이동',desc:'마루야마코엔역 → 도자이선 신삿포로 방면 3정거장 → 오도리역 → 미츠코시 GU',route:'shrine-gu'});
-    cityToday.events=cityToday.events.filter(e=>e.place!=='kineya');
-    const gu=cityToday.events.find(e=>e.place==='gu-mitsukoshi');
-    if(gu)Object.assign(gu,{time:'12:15',desc:'홋카이도 대학 생략 · 오도리역에서 미츠코시 GU로 바로 이동'});
-    cityToday.events.push({time:'13:15',icon:'🍜',title:'쇼핑 중 점심 · 현장 선택',desc:'GU 쇼핑 상황에 맞춰 오도리·다누키코지 인근 식당에서 점심'});
-    for(const [id,time] of [['standard-moyuk','14:15'],['daiso-tanukikoji2','15:00']]){
-      const e=cityToday.events.find(x=>x.place===id);if(e)e.time=time;
-    }
-    cityToday.events.sort((a,b)=>a.time.localeCompare(b.time));
-    routes['shrine-gu']={
-      title:'홋카이도 신궁 → 미츠코시 GU',tag:'DAY 2 · 대학 생략',time:'지하철 3정거장 + 도보',fare:'도자이선',
-      map:'https://www.google.com/maps/dir/?api=1&origin=Hokkaido+Jingu&destination=GU+Sapporo+Mitsukoshi&travelmode=transit',
-      tip:'円山公園역에서 新さっぽろ 방면 탑승 → 西18丁目 → 西11丁目 → 大通역 하차 후 삿포로 미츠코시로 이동.',
-      steps:[['마루야마코엔역','円山公園駅','마루야마코엔에키','도자이선 역','신궁에서 역으로 도보 이동'],
-      ['신삿포로 방면 탑승','新さっぽろ方面','신삿포로 호멘','도자이선','오도리까지 3정거장'],
-      ['오도리역 하차','大通駅','오도리에키','오도리역','미츠코시 방향 출구 및 지하 연결통로 확인'],
-      ['GU 쇼핑','札幌三越','삿포로 미츠코시','미츠코시','백화점 내 GU 위치 안내 확인']]
-    };
-    const university=places.find(x=>x.id==='hokudai-ginkgo');
-    if(university)Object.assign(university,{rating:'이번 여행 일정에서 제외',recommend:'10월 21일 현장 일정 변경으로 방문 생략. GU와 시내 쇼핑에 시간을 배정합니다.'});
-  }
 
   // 2026-10-21 family change: city on Wednesday, Jozankei by regular bus Thursday.
   // Do not touch cloud-synced places, saved expenses, favorites, or user notes.

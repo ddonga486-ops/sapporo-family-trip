@@ -565,7 +565,7 @@
     valley.events=valley.events.filter(e=>!['호텔 → 갓파라이너 정류장','조잔케이 → 스스키노'].includes(e.title));
     changeEvent(valley.events,e=>e.title==='호텔 조식',{time:'07:00',desc:'온천용 작은 가방 · 방한복 · 미끄럼 방지 신발 준비'});
     valley.events.push(
-      {time:'07:45',icon:'🚇',title:'호텔 → 스스키노역 → 마코마나이역',desc:'난보쿠선 真駒内행 지하철 → 종점 하차 후 조테츠 일반버스 환승',route:'hotel-jozankei'},
+      {time:'08:05',icon:'🚇',title:'호텔 → 스스키노역 → 마코마나이역',desc:'호텔에서 스스키노역 3번 출구까지 도보 약 4분 → 08:15 난보쿠선 真駒内행(약 15분) → 마코마나이역 08:30 도착 → 일반버스 승강장 이동',route:'hotel-jozankei'},
       {time:'08:51',icon:'🚌',title:'12번 계열 일반버스 탑승 (예정)',desc:'마코마나이역 → 定山渓神社前(조잔케이 신사 앞) 약 09:31 도착 예상\\n예약 불필요 · 평일 출발시간과 운행여부 아침에 재확인 · 좌석 보장 없음',route:'hotel-jozankei'},
       {time:'16:20',icon:'🚶',title:'온천 마무리 · 일반버스 정류장 이동',desc:'버스 운행시간 현장 확인 후 차고 앞 또는 가까운 정류장으로 이동 · 출발 15분 전 도착',route:'jozankei-return'},
       {time:'16:30',icon:'🚌',title:'일반버스로 귀가 (시간 미확정)',desc:'조잔케이 → 마코마나이역 12번 계열 일반버스 → 지하철 난보쿠선 → 스스키노\\n16:30~17:30대 출발편 중 현장 시간표 확인 후 탑승 · 예약제 17:06 갓파라이너와 혼동 금지',route:'jozankei-return'}

@@ -550,6 +550,8 @@
     const previousCityEvents=city.events, previousValleyEvents=valley.events;
     city.events=previousValleyEvents;
     valley.events=previousCityEvents;
+    city.date='10.21 (수)';
+    valley.date='10.22 (목)';
     city.title='삿포로 신궁 · 대학 · 쇼핑';
     city.subtitle='홋카이도 신궁 · 대학 은행나무길 · 쇼핑 · 와규 · 네온거리';
     city.image='./assets/day3-sapporo.jpg';
